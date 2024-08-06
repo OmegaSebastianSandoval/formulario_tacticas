@@ -78,7 +78,7 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
                     <label for="ingreso_telefono" class="control-label">Tel&eacute;fono</label>
                     <label class="input-group">
 
-                        <input type="number" name="ingreso_telefono" id="ingreso_telefono" class="form-control" required>
+                        <input type="text" name="ingreso_telefono" id="ingreso_telefono" class="form-control" required>
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
@@ -112,7 +112,7 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div id="contenedor-input-pareja" class="col-12 col-md-6 col-lg-4 form-group d-none">
+                <div id="contenedor-input-pareja" class="col-12 col-md-6 col-lg-2 form-group d-none">
                     <label for="ingreso_nombre_pareja" class="control-label">Nombre de la pareja</label>
                     <label class="input-group">
 
@@ -245,7 +245,7 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
                     <label for="dependiente_nombre[]" class="control-label">Nombre</label>
                     <label class="input-group">
 
-                        <input type="text" name="dependiente_nombre[]" class="form-control">
+                        <input type="text" name="dependiente_nombre[]" class="form-control" required>
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
@@ -253,7 +253,7 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
                     <label for="dependiente_parentesco[]" class="control-label">Parentesco</label>
                     <label class="input-group">
 
-                        <input type="text" name="dependiente_parentesco[]" class="form-control">
+                        <input type="text" name="dependiente_parentesco[]" class="form-control" required>
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
@@ -263,7 +263,7 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
             </div>
             <div id="campos" class=""></div>
             <div class="d-flex justify-content-center mb-4">
-                <a href="javascript:void(0);" onclick="AgregarCampos(event)" class="btn btn-outline-dark">Incluir más personas clic aquí</a>
+                <a href="javascript:void(0);" onclick="AgregarCampos(event)" class="btn btn-outline-dark">Incluir más personas</a>
             </div>
             <hr>
         </div>
@@ -277,23 +277,23 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
                     <label for="vive_con_nombre[]" class="control-label">Nombre</label>
                     <label class="input-group">
 
-                        <input type="text" name="vive_con_nombre[]" class="form-control">
+                        <input type="text" name="vive_con_nombre[]" class="form-control" required>
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2  form-group">
+                <div class="col-12 col-md-6 col-lg-4  form-group">
                     <label for="vive_con_parentesco[]" class="control-label">Parentesco</label>
                     <label class="input-group">
 
-                        <input type="text" name="vive_con_parentesco[]" class="form-control">
+                        <input type="text" name="vive_con_parentesco[]" class="form-control" required>
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2  form-group">
+                <div class="col-12 col-md-6 col-lg-3  form-group">
                     <label for="vive_con_telefono[]" class="control-label">Teléfono</label>
                     <label class="input-group">
 
-                        <input type="text" name="vive_con_telefono[]" class="form-control">
+                        <input type="text" name="vive_con_telefono[]" class="form-control validar-telefono" required>
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
@@ -303,7 +303,7 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
             </div>
             <div id="camposvivcecon" class=""></div>
             <div class="d-flex justify-content-center mb-4">
-                <a href="javascript:void(0);" onclick="AgregarCamposViveCon(event)" class="btn btn-outline-dark">Incluir más personas clic aquí</a>
+                <a href="javascript:void(0);" onclick="AgregarCamposViveCon(event)" class="btn btn-outline-dark">Incluir más personas</a>
             </div>
             <hr>
         </div>
@@ -312,11 +312,11 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
         <div class="content-dashboard">
 
             <div class="row">
-                <div class="col-12 col-md-8  form-group">
-                    <label for="datos_academicos_formacion[]" class="control-label">Nombre</label>
+                <div class="col-12 col-md-11  form-group">
+                    <label for="datos_academicos_formacion[]" class="control-label">Título</label>
                     <label class="input-group">
 
-                        <input type="text" name="datos_academicos_formacion[]" class="form-control">
+                        <input type="text" name="datos_academicos_formacion[]" class="form-control" required>
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
@@ -327,6 +327,51 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
             </div>
             <hr>
         </div>
+
+
+        <h4>DATOS LABORALES</h4>
+        <div class="content-dashboard">
+
+            <div class="row">
+                <div class="col-12 col-md-3 col-lg-2 form-group">
+                    <label for="datos_laborales_empleo[]" class="control-label">Cargo</label>
+                    <label class="input-group">
+
+                        <input type="text" name="datos_laborales_empleo[]" class="form-control" required>
+                    </label>
+
+                </div>
+                <div class="col-12 col-md-3 col-lg-2 form-group">
+                    <label for="datos_laborales_fecha_inicio[]" class="control-label  ">Fecha de inicio</label>
+                    <label class="input-group">
+
+                        <input type="date" name="datos_laborales_fecha_inicio[]" class="form-control fecha-inicio" required>
+                    </label>
+                </div>
+                <div class="col-12 col-md-3 col-lg-2 form-group">
+                    <label for="datos_laborales_fecha_fin[]" class="control-label">Fecha de salida</label>
+                    <label class="input-group">
+
+                        <input type="date" name="datos_laborales_fecha_fin[]" class="form-control  fecha-fin" required>
+                    </label>
+                </div>
+                <div class="col-12 col-md-3 col-lg-6 form-group">
+                    <label for="datos_laborales_motivo_retiro[]" class="control-label">Motivo de salida</label>
+                    <label class="input-group">
+
+                        <textarea name="datos_laborales_motivo_retiro[]" class="form-control" required ></textarea>
+                    </label>
+                </div>
+
+
+            </div>
+            <div id="camposlaborales" class=""></div>
+            <div class="d-flex justify-content-center mb-4">
+                <a href="javascript:void(0);" onclick="AgregarCamposLaborales(event)" class="btn btn-outline-dark">Incluir más datos laborales</a>
+            </div>
+            <hr>
+        </div>
+
 
         <div class="d-fleX justify-content-center">
             <div class="g-recaptcha" data-sitekey="6LfFDZskAAAAAE2HmM7Z16hOOToYIWZC_31E61Sr"></div>
@@ -367,20 +412,20 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
          <div class="col-12 col-md-6 col-lg-4 form-group">
                     <label for="vive_con_nombre[]" class="control-label">Nombre</label>
                     <label class="input-group">
-                        <input type="text" name="vive_con_nombre[]" class="form-control" >
+                        <input type="text" name="vive_con_nombre[]" class="form-control" required >
                     </label>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2  form-group">
+                <div class="col-12 col-md-6 col-lg-4  form-group">
                     <label for="vive_con_parentesco[]" class="control-label">Parentesco</label>
                     <label class="input-group">
-                        <input type="text" name="vive_con_parentesco[]" class="form-control" >
+                        <input type="text" name="vive_con_parentesco[]" class="form-control" required >
                     </label>
                 </div>
-                <div class="col-10 col-md-6 col-lg-2  form-group">
+                <div class="col-10 col-md-6 col-lg-3  form-group">
                     <label for="vive_con_telefono[]" class="control-label">Teléfono</label>
                     <label class="input-group">
 
-                        <input type="text" name="vive_con_telefono[]" class="form-control" >
+                        <input type="text" name="vive_con_telefono[]" class="form-control validar-telefono"  required>
                     </label>
                 </div>
                 <div class="col-2 col-md-1 d-flex justify-content-center align-items-center">
@@ -395,10 +440,10 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
         const campo = document.createElement('div');
         campo.className = 'row';
         campo.innerHTML = `
-         <div class="col-8 col-md-8  form-group">
-                    <label for="datos_academicos_formacion[]" class="control-label">Nombre</label>
+         <div class="col-11 col-md-11  form-group">
+                    <label for="datos_academicos_formacion[]" class="control-label">Título</label>
                     <label class="input-group">
-                        <input type="text" name="datos_academicos_formacion[]" class="form-control" >
+                        <input type="text" name="datos_academicos_formacion[]" class="form-control" required >
                     </label>
                 </div>
                 
@@ -409,7 +454,112 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
         document.getElementById("camposformacion").appendChild(campo);
     }
 
+    function AgregarCamposLaborales(event) {
+        event.preventDefault();
+        const campo = document.createElement('div');
+        campo.className = 'row';
+        campo.innerHTML = `
+                <div class="col-12 col-md-3 col-lg-2 form-group">
+                    <label for="datos_laborales_empleo[]" class="control-label">Cargo</label>
+                    <label class="input-group">
+                        <input type="text" name="datos_laborales_empleo[]" class="form-control">
+                    </label>
+                    
+                </div>
+                <div class="col-12 col-md-3 col-lg-2 form-group">
+                    <label for="datos_laborales_fecha_inicio[]" class="control-label">Fecha de inicio</label>
+                    <label class="input-group">
+
+                        <input type="date" name="datos_laborales_fecha_inicio[]" class="form-control fecha-inicio">
+                    </label>                  
+                </div>
+                <div class="col-12 col-md-3 col-lg-2 form-group">
+                    <label for="datos_laborales_fecha_fin[]" class="control-label">Fecha de salida</label>
+                    <label class="input-group">
+
+                        <input type="date" name="datos_laborales_fecha_fin[]" class="form-control  fecha-fin">
+                    </label>
+                </div>
+                <div class="col-12 col-md-3 col-lg-6 form-group">
+                    <label for="datos_laborales_motivo_retiro[]" class="control-label">Motivo de salida</label>
+                    <label class="input-group">
+
+                        <textarea name="datos_laborales_motivo_retiro[]" class="form-control"></textarea>
+                    </label>
+                </div>
+
+    `;
+        document.getElementById("camposlaborales").appendChild(campo);
+
+        const fechaInicio = campo.querySelector('.fecha-inicio');
+        const fechaFin = campo.querySelector('.fecha-fin');
+
+        fechaInicio.addEventListener('change', validarFechas);
+        fechaFin.addEventListener('change', validarFechas);
+
+        // Establecer el valor máximo permitido para la fecha de fin
+        const fechaActual = new Date();
+        const maxFechaFin = new Date(fechaActual);
+        maxFechaFin.setDate(fechaActual.getDate() + 30);
+        fechaFin.setAttribute('max', maxFechaFin.toISOString().split('T')[0]);
+
+    }
+
+    function validarFechas(event) {
+        const campo = event.target.closest('.row');
+        const fechaInicio = campo.querySelector('.fecha-inicio').value;
+        const fechaFin = campo.querySelector('.fecha-fin').value;
+
+        if (fechaInicio) {
+            const fechaInicioDate = new Date(fechaInicio);
+            campo.querySelector('.fecha-fin').setAttribute('min', fechaInicio);
+        }
+
+        if (fechaFin) {
+            const fechaFinDate = new Date(fechaFin);
+            campo.querySelector('.fecha-inicio').setAttribute('max', fechaFin);
+        }
+
+        if (fechaInicio && fechaFin) {
+            const fechaInicioDate = new Date(fechaInicio);
+            const fechaFinDate = new Date(fechaFin);
+
+            if (fechaInicioDate > fechaFinDate) {
+                alert('La fecha de inicio no puede ser mayor a la fecha de fin.');
+                event.target.value = ''; // Limpiar el valor del campo inválido
+            }
+        }
+    }
+
+    document.querySelectorAll('.fecha-inicio, .fecha-fin').forEach(input => {
+        input.addEventListener('change', validarFechas);
+    });
+
     function EliminarCampo(button) {
         button.parentElement.parentElement.remove();
     }
+
+    const limitarLongitud = (input, maxLength) => {
+        input.addEventListener('input', (event) => {
+            // Obtener el valor actual del input y eliminar caracteres no numéricos
+            let value = event.target.value.replace(/\D/g, '');
+
+            // Si el valor supera la longitud máxima, truncar el valor
+            if (value.length > maxLength) {
+                value = value.slice(0, maxLength);
+            }
+
+            // Actualizar el valor del input
+            event.target.value = value;
+        });
+    };
+
+    // Obtener los inputs por sus IDs
+    const inputsTelefono = document.querySelectorAll('#ingreso_telefono, #ingreso_telefono_madre, #ingreso_telefono_padre, .validar-telefono');
+    const inputsTelefonoCasa = document.querySelectorAll('#ingreso_telefono_casa');
+
+    // Aplicar la función a cada input
+    inputsTelefono.forEach(input => limitarLongitud(input, 14));
+    inputsTelefonoCasa.forEach(input => limitarLongitud(input, 12));
+
 </script>

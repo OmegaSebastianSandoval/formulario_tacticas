@@ -184,6 +184,9 @@ header h2 {
   width: 40px !important;
   height: 40px !important;
   margin-bottom: 8px !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
 
 
 }

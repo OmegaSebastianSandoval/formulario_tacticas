@@ -107,11 +107,11 @@ class Page_indexController extends Page_mainController
 
         //consultar que no exista la cedula anteriormente
         $cedula = $data['ingreso_cedula'];
-        
+
         $ingresoExistente = $this->mainModel->getList(" ingreso_cedula = '$cedula'");
-         
+
         if ($ingresoExistente) {
-          header('Location: ' . $this->route . '?error="1"&cc=' . $cedula . '');
+          header('Location: ' . $this->route . '?error=1&cc=' . $cedula . '');
           return;
         }
         $id = $this->mainModel->insert($data);
@@ -172,18 +172,76 @@ class Page_indexController extends Page_mainController
             }
           }
         }
+
+
+        //Insertar formación academica
+        $formacionModel = new Page_Model_DbTable_Datosacademicos();
+        $datos_academicos_formacion = $_POST['datos_academicos_formacion'];
+        $datosArray = [];
+        foreach ($datos_academicos_formacion as $index => $formacion) {
+          $formacion;
+          if ($formacion != '') {
+            $datosArray = [
+              'datos_academicos_formacion' => $formacion,
+              'datos_academicos_cedula_colaborador' => $data['ingreso_cedula']
+            ];
+
+            $idFormacion = $formacionModel->insert($datosArray);
+
+            if ($idFormacion) {
+              $data['ingreso_id'] = $idFormacion;
+              $data['log_log'] = print_r($datosArray, true);
+              $data['log_tipo'] = 'CREAR FORMACION ACADEMICA';
+              $logModel = new Administracion_Model_DbTable_Log();
+              $logModel->insert($data);
+            }
+          }
+        }
+
+
+
+        //insertar Datos laborales
+        $datosLaboralesModel = new Page_Model_DbTable_Datoslaborales();
+        $datos_laborales_empleo = $_POST['datos_laborales_empleo'];
+        $datos_laborales_fecha_inicio = $_POST['datos_laborales_fecha_inicio'];
+        $datos_laborales_fecha_fin = $_POST['datos_laborales_fecha_fin'];
+        $datos_laborales_motivo_retiro = $_POST['datos_laborales_motivo_retiro'];
+        $datosLaboralesArray = [];
+
+        foreach ($datos_laborales_empleo as $index => $formacionLaboral) {
+          $fechaInicio = $datos_laborales_fecha_inicio[$index];
+          $fechaFin = $datos_laborales_fecha_fin[$index];
+          $motivoRetiro = $datos_laborales_motivo_retiro[$index];
+
+          if ($formacionLaboral != '' && $fechaInicio != '' && $fechaFin != '' && $motivoRetiro != '') {
+            $datosLaboralesArray = [
+              'datos_laborales_empleo' => $formacionLaboral,
+              'datos_laborales_fecha_inicio' => $fechaInicio,
+              'datos_laborales_fecha_fin' => $fechaFin,
+              'datos_laborales_motivo_retiro' => $motivoRetiro,
+              'datos_laborales_cedula_colaborador' => $data['ingreso_cedula']
+            ];
+            $idDatosLaborales = $datosLaboralesModel->insert($datosLaboralesArray);
+            if ($idDatosLaborales) {
+              $data['ingreso_id'] = $idDatosLaborales;
+              $data['log_log'] = print_r($datosLaboralesArray, true);
+              $data['log_tipo'] = 'CREAR DATOS LABORALES';
+              $logModel = new Administracion_Model_DbTable_Log();
+              $logModel->insert($data);
+            }
+          }
+        }
+
+
+        $data['ingreso_id'] = $id;
+        $data['log_log'] = print_r($data, true);
+        $data['log_tipo'] = 'CREAR INGRESO';
+        $logModel = new Administracion_Model_DbTable_Log();
+        $logModel->insert($data);
       }
-
-
-      $data['ingreso_id'] = $id;
-      $data['log_log'] = print_r($data, true);
-      $data['log_tipo'] = 'CREAR INGRESO';
-      $logModel = new Administracion_Model_DbTable_Log();
-      $logModel->insert($data);
+      //header('Location: ' . $this->route . '' . '');
     }
-    //header('Location: ' . $this->route . '' . '');
   }
-
 
 
 
