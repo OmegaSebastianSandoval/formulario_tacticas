@@ -5,6 +5,9 @@
  */
 class Page_indexController extends Page_mainController
 {
+
+
+
   /**
    * $mainModel  instancia del modelo de  base de datos ingreso
    * @var modeloContenidos
@@ -82,6 +85,19 @@ class Page_indexController extends Page_mainController
     $this->_view->list_ingreso_vive_casa = $this->getIngresovivecasa();
     $this->_view->routeform = $this->route . "/insert";
   }
+  public function pruebaAction()
+  {
+
+    error_reporting(E_ALL);
+    $this->setLayout('blanco');
+    // Crear una instancia del modelo de envío de correo electrónico
+    $mailModel = new Core_Model_Sendingemail($this->_view);
+
+    // Enviar correo de REGISTRO
+    $mail = $mailModel->sendIngreso(1);
+    print_r($mail);
+  }
+
 
   /**
    * Genera la Informacion necesaria para editar o crear un  ingreso  y muestra su formulario
@@ -97,31 +113,43 @@ class Page_indexController extends Page_mainController
    */
   public function insertAction()
   {
+    // Habilitar la visualización de todos los errores.
     error_reporting(E_ALL);
+
+    // Establecer el diseño de la página como 'blanco'.
     $this->setLayout('blanco');
 
+    // Obtener y sanitizar el parámetro CSRF.
     $csrf = $this->_getSanitizedParam("csrf");
+
+    // Verificar si el token CSRF recibido coincide con el almacenado en la sesión.
     if (Session::getInstance()->get('csrf')[$this->_getSanitizedParam("csrf_section")] == $csrf) {
+
+      // Verificar que el método de solicitud sea POST.
       if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+        // Obtener los datos del formulario.
         $data = $this->getData();
 
-        //consultar que no exista la cedula anteriormente
+        // Consultar si ya existe una entrada con la cédula proporcionada.
         $cedula = $data['ingreso_cedula'];
-
         $ingresoExistente = $this->mainModel->getList(" ingreso_cedula = '$cedula'");
 
+        // Si existe una entrada con la cédula, redirigir con un error.
         if ($ingresoExistente) {
           header('Location: ' . $this->route . '?error=1&cc=' . $cedula . '');
           return;
         }
+
+        // Insertar los datos principales en la base de datos.
         $id = $this->mainModel->insert($data);
 
-
-        //Insertar Dependientes
+        // Insertar Dependientes.
         $dependientesModel = new Page_Model_DbTable_Dependientes();
         $nombres = $_POST['dependiente_nombre'];
         $parentescos = $_POST['dependiente_parentesco'];
         $dependientesArray = [];
+
         foreach ($nombres as $index => $nombre) {
           $parentesco = $parentescos[$index];
           if ($nombre != '' && $parentesco != '') {
@@ -131,8 +159,10 @@ class Page_indexController extends Page_mainController
               'dependiente_cedula_colaborador' => $data['ingreso_cedula']
             ];
 
+            // Insertar el dependiente en la base de datos.
             $idDependiente = $dependientesModel->insert($dependientesArray);
 
+            // Registrar en el log si la inserción fue exitosa.
             if ($idDependiente) {
               $data['ingreso_id'] = $idDependiente;
               $data['log_log'] = print_r($dependientesArray, true);
@@ -143,13 +173,13 @@ class Page_indexController extends Page_mainController
           }
         }
 
-
-        //Insertar Con quien vive
+        // Insertar Con quien vive.
         $viveConModel = new Page_Model_DbTable_Conquienesvive();
         $viveConNombres = $_POST['vive_con_nombre'];
         $viveConParentescos = $_POST['vive_con_parentesco'];
         $viveConTelefonos = $_POST['vive_con_telefono'];
         $viveConArray = [];
+
         foreach ($viveConNombres as $index => $nombre) {
           $parentesco = $viveConParentescos[$index];
           $telefono = $viveConTelefonos[$index];
@@ -161,8 +191,10 @@ class Page_indexController extends Page_mainController
               'vive_con_cedula_colaborador' => $data['ingreso_cedula']
             ];
 
+            // Insertar en la base de datos.
             $idViveCon = $viveConModel->insert($viveConArray);
 
+            // Registrar en el log si la inserción fue exitosa.
             if ($idViveCon) {
               $data['ingreso_id'] = $idViveCon;
               $data['log_log'] = print_r($viveConArray, true);
@@ -173,21 +205,22 @@ class Page_indexController extends Page_mainController
           }
         }
 
-
-        //Insertar formación academica
+        // Insertar Formación Académica.
         $formacionModel = new Page_Model_DbTable_Datosacademicos();
         $datos_academicos_formacion = $_POST['datos_academicos_formacion'];
         $datosArray = [];
+
         foreach ($datos_academicos_formacion as $index => $formacion) {
-          $formacion;
           if ($formacion != '') {
             $datosArray = [
               'datos_academicos_formacion' => $formacion,
               'datos_academicos_cedula_colaborador' => $data['ingreso_cedula']
             ];
 
+            // Insertar en la base de datos.
             $idFormacion = $formacionModel->insert($datosArray);
 
+            // Registrar en el log si la inserción fue exitosa.
             if ($idFormacion) {
               $data['ingreso_id'] = $idFormacion;
               $data['log_log'] = print_r($datosArray, true);
@@ -198,9 +231,7 @@ class Page_indexController extends Page_mainController
           }
         }
 
-
-
-        //insertar Datos laborales
+        // Insertar Datos Laborales.
         $datosLaboralesModel = new Page_Model_DbTable_Datoslaborales();
         $datos_laborales_empleo = $_POST['datos_laborales_empleo'];
         $datos_laborales_fecha_inicio = $_POST['datos_laborales_fecha_inicio'];
@@ -221,7 +252,11 @@ class Page_indexController extends Page_mainController
               'datos_laborales_motivo_retiro' => $motivoRetiro,
               'datos_laborales_cedula_colaborador' => $data['ingreso_cedula']
             ];
+
+            // Insertar en la base de datos.
             $idDatosLaborales = $datosLaboralesModel->insert($datosLaboralesArray);
+
+            // Registrar en el log si la inserción fue exitosa.
             if ($idDatosLaborales) {
               $data['ingreso_id'] = $idDatosLaborales;
               $data['log_log'] = print_r($datosLaboralesArray, true);
@@ -232,16 +267,18 @@ class Page_indexController extends Page_mainController
           }
         }
 
-
+        // Registrar el ingreso principal en el log.
         $data['ingreso_id'] = $id;
         $data['log_log'] = print_r($data, true);
         $data['log_tipo'] = 'CREAR INGRESO';
         $logModel = new Administracion_Model_DbTable_Log();
         $logModel->insert($data);
       }
-      //header('Location: ' . $this->route . '' . '');
+      // Redirigir a la ruta especificada (esta línea está comentada).
+      // header('Location: ' . $this->route . '' . '');
     }
   }
+
 
 
 

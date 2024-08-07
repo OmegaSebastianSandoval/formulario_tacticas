@@ -2,6 +2,14 @@
 
 $nuevafecha = strtotime('-18 year', strtotime(date('Y-m-d')));
 $nuevafecha = date('Y-m-d', $nuevafecha);
+
+$maxFechaFinTrabajo = strtotime('+30 day', strtotime(date('Y-m-d')));
+$maxFechaFinTrabajo = date('Y-m-d', $maxFechaFinTrabajo);
+echo $maxFechaFinTrabajo;
+
+$maxFechaInicioTrabajo = strtotime('-1 day', strtotime(date('Y-m-d')));
+$maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
+echo $maxFechaInicioTrabajo
 ?>
 <div class="container contenedor-formulario mt-3 mb-5 ">
     <span class="label-fecha">Fecha de ingreso: <span><?= date("Y-m-d H:m:s") ?></span></span>
@@ -11,6 +19,9 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
 
             <input type="hidden" name="csrf" id="csrf" value="<?php echo $this->csrf ?>">
             <input type="hidden" name="csrf_section" id="csrf_section" value="<?php echo $this->csrf_section ?>">
+
+        
+
 
             <div class="row">
                 <input type="hidden" name="ingreso_fecha_ingreso" value="<?= date("Y-m-d H:m:s") ?>">
@@ -342,17 +353,17 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
 
                 </div>
                 <div class="col-12 col-md-3 col-lg-2 form-group">
-                    <label for="datos_laborales_fecha_inicio[]" class="control-label  ">Fecha de inicio</label>
+                    <label for="datos_laborales_fecha_inicio[]" class="control-label  " >Fecha de inicio</label>
                     <label class="input-group">
 
-                        <input type="date" name="datos_laborales_fecha_inicio[]" class="form-control fecha-inicio" required>
+                        <input type="date" name="datos_laborales_fecha_inicio[]" class="form-control fecha-inicio" required max="<?= $maxFechaInicioTrabajo?>">
                     </label>
                 </div>
                 <div class="col-12 col-md-3 col-lg-2 form-group">
                     <label for="datos_laborales_fecha_fin[]" class="control-label">Fecha de salida</label>
                     <label class="input-group">
 
-                        <input type="date" name="datos_laborales_fecha_fin[]" class="form-control  fecha-fin" required>
+                        <input type="date" name="datos_laborales_fecha_fin[]" class="form-control  fecha-fin"  max="<?= $maxFechaFinTrabajo?>" required>
                     </label>
                 </div>
                 <div class="col-12 col-md-3 col-lg-6 form-group">
@@ -524,10 +535,10 @@ $nuevafecha = date('Y-m-d', $nuevafecha);
             const fechaInicioDate = new Date(fechaInicio);
             const fechaFinDate = new Date(fechaFin);
 
-            if (fechaInicioDate > fechaFinDate) {
-                alert('La fecha de inicio no puede ser mayor a la fecha de fin.');
-                event.target.value = ''; // Limpiar el valor del campo inválido
-            }
+            // if (fechaInicioDate > fechaFinDate) {
+            //     alert('La fecha de inicio no puede ser mayor a la fecha de fin.');
+            //     event.target.value = ''; // Limpiar el valor del campo inválido
+            // }
         }
     }
 

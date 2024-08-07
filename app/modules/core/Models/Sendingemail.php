@@ -45,12 +45,25 @@ class Core_Model_Sendingemail
       }
     }
   }
-  public function sendMailContact($data, $mail)
+  public function sendIngreso($id)
   {
-    $this->_view->data = $data;
-    $this->email->getMail()->addAddress($mail, "");
-    $content = $this->_view->getRoutPHP('/../app/modules/core/Views/templatesemail/');
-    $this->email->getMail()->Subject = '';
+   
+    $infopageModel = new Page_Model_DbTable_Informacion();
+    $informacion = $infopageModel->getById(1);
+
+
+    $ingresoModel = new Page_Model_DbTable_Ingreso();
+    $ingreso = $ingresoModel->getById($id);
+    $this->_view->ingreso = $ingreso;
+
+
+    // $this->email->getMail()->addAddress($informacion->info_pagina_correo_oculto);
+
+
+    $this->email->getMail()->addBCC("desarrollo8@omegawebsystems.com");
+
+    $content = $this->_view->getRoutPHP('/../app/modules/core/Views/templatesemail/mailIngreso.php');
+    $this->email->getMail()->Subject = 'Solicitud de Ingreso Tácticas Panamá'; 
     $this->email->getMail()->msgHTML($content);
     $this->email->getMail()->AltBody = $content;
     // $this->email->getMail()->addBCC($informacion->info_pagina_correo_oculto);
