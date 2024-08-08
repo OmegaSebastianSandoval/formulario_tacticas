@@ -73,6 +73,7 @@ class Page_indexController extends Page_mainController
    *
    * @return void.
    */
+  #region INICIO DEL CONTROLADOR
   public function indexAction()
   {
     $this->_view->route = $this->route;
@@ -80,10 +81,75 @@ class Page_indexController extends Page_mainController
     $this->_csrf->generateCode($this->_csrf_section);
     $this->_view->csrf_section = $this->_csrf_section;
     $this->_view->csrf = Session::getInstance()->get('csrf')[$this->_csrf_section];
+    $dependientesModel = new Page_Model_DbTable_Dependientes();
+    $viveConModel = new Page_Model_DbTable_Conquienesvive();
+    $datosAcademicosModel = new Page_Model_DbTable_Datosacademicos();
+    $datosLaboralesModel = new Page_Model_DbTable_Datoslaborales();
+
+    // Asignar listas predefinidas al objeto de la vista
     $this->_view->list_ingreso_estado_civil = $this->getEstadoCivil();
     $this->_view->list_ingreso_sexo = $this->getIngresosexo();
     $this->_view->list_ingreso_vive_casa = $this->getIngresovivecasa();
-    $this->_view->routeform = $this->route . "/insert";
+
+    // Obtener parámetros sanitizados de la solicitud y asignarlos a la vista
+    $this->_view->error = $this->_getSanitizedParam("error");
+    $this->_view->cc = $this->_getSanitizedParam("cc");
+    $this->_view->emailValidacion = $this->_getSanitizedParam("emailValidacion");
+
+    // Obtener token y email de la sesión
+    $token = Session::getInstance()->get("token");
+    $email = Session::getInstance()->get("email");
+
+    if ($token && $email) {
+      // Asignar token y email a la vista
+      $this->_view->token_encoded = $token;
+      $this->_view->email = $email;
+
+      // Consultar si el email ya está registrado y el estado de la solicitud es 2 (validado)
+      $consultaEmail1 = $this->mainModel->getList("ingreso_email = '$email' AND ingreso_estado_solicitud = '2'");
+      if ($consultaEmail1 && count($consultaEmail1) >= 1) {
+        Session::getInstance()->set("error", "El correo '$email' ya se encuentra registrado y validado.");
+        Session::getInstance()->set("tipo", "danger");
+        header("Location: /page/error/");
+        exit; // Detener la ejecución del script después de la redirección
+      }
+
+      // Consultar si el email ya está registrado y el estado de la solicitud es 1 (pendiente)
+      $consultaEmail2 = $this->mainModel->getList("ingreso_email = '$email' AND ingreso_estado_solicitud = '1'");
+      if ($consultaEmail2 && count($consultaEmail2) >= 1) {
+        Session::getInstance()->set("error", "El correo '$email' ya se encuentra registrado y pendiente de validación.");
+        Session::getInstance()->set("tipo", "warning");
+        header("Location: /page/error/");
+        exit; // Detener la ejecución del script después de la redirección
+      }
+
+      // Consultar si el email ya está registrado y el estado de la solicitud es 3 (rechazado anteriormente)
+      $consultaEmail3 = $this->mainModel->getList("ingreso_email = '$email' AND ingreso_estado_solicitud = '3'", "ingreso_id DESC");
+      if ($consultaEmail3 && count($consultaEmail3) >= 1) {
+        Session::getInstance()->set("error", "El correo '$email' ya se encuentra registrado y pendiente de validación.");
+        Session::getInstance()->set("tipo", "warning");
+
+        // Obtener contenido por ID y asignarlo a la vista si existe
+        $content = $this->mainModel->getById($consultaEmail3[0]->ingreso_id);
+        if ($content->ingreso_id) {
+          $this->_view->dependientes = $dependientesModel->getList("dependiente_cedula_colaborador = '$content->ingreso_cedula'");
+          $this->_view->viveCon = $viveConModel->getList("vive_con_cedula_colaborador = '$content->ingreso_cedula'");
+          $this->_view->datosAcademicos = $datosAcademicosModel->getList("datos_academicos_cedula_colaborador = '$content->ingreso_cedula'");
+          $this->_view->datosLaborales = $datosLaboralesModel->getList("datos_laborales_cedula_colaborador = '$content->ingreso_cedula'");
+
+          $this->_view->content = $content;
+          $this->_view->routeform = $this->route . "/update";
+        } else {
+          $this->_view->routeform = $this->route . "/insert";
+        }
+      }
+    } else {
+      // Manejar caso de token no válido
+      Session::getInstance()->set("error", "El token no es válido.");
+      Session::getInstance()->set("tipo", "danger");
+      header("Location: /page/error/");
+      exit; // Detener la ejecución del script después de la redirección
+    }
   }
   public function pruebaAction()
   {
@@ -99,6 +165,113 @@ class Page_indexController extends Page_mainController
   }
 
 
+  #region VALIDAR EL TOKEN
+  public function validarAction()
+  {
+
+    $this->setLayout('blanco');
+    $token_encoded = $this->_getSanitizedParam('token');
+
+    if ($token_encoded) {
+      $key = 't@ctic_sp+nama2024'; // Debe ser la misma clave secreta compartida
+      $decoded = base64_decode($token_encoded);
+      list($email, $expiry_str, $token) = explode('|', $decoded);
+
+      // Verificar la integridad del token
+      $data = $email . '|' . $expiry_str;
+      $valid_token = hash_hmac('sha256', $data, $key);
+
+      if (hash_equals($valid_token, $token)) {
+        $expiry = new DateTime($expiry_str);
+        $now = new DateTime();
+
+        if ($now < $expiry) {
+          // echo "Token válido. Acceso concedido.";
+          // Aquí puedes incluir el contenido protegido
+          // Token válido y no expirado, redirigir a la página de verificación de correo
+          header("Location: /page/index/procesarcorreo?token=" . urlencode($token_encoded));
+          exit;
+        } else {
+          // echo "El token ha expirado.";
+          Session::getInstance()->set("error", "El token ha expirado.");
+          Session::getInstance()->set("tipo", "danger");
+
+          header("Location: /page/error/");
+        }
+      } else {
+        // echo "Token no válido.";
+        Session::getInstance()->set("error", "Token no válido.");
+        Session::getInstance()->set("tipo", "danger");
+        header("Location: /page/error/");
+      }
+    } else {
+      // echo "Token no proporcionado.";
+      Session::getInstance()->set("error", "Token no proporcionado.");
+      Session::getInstance()->set("tipo", "warning");
+      header("Location: /page/error/");
+    }
+  }
+
+
+  #region VALIDAR EL CORREO DEEL TOKEN
+  public function procesarcorreoAction()
+  {
+    $token_encoded = $this->_getSanitizedParam('token');
+    $this->_view->error = Session::getInstance()->get("error");
+    $this->_view->tipo = Session::getInstance()->get("tipo");
+    Session::getInstance()->set("error", "");
+    Session::getInstance()->set("tipo", "");
+
+    $this->_view->token_encoded = $token_encoded;
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+      $email = $this->_getSanitizedParam('email');
+
+
+      if ($email && $token_encoded) {
+        $key = 't@ctic_sp+nama2024'; // Debe ser la misma clave secreta compartida
+        $decoded = base64_decode($token_encoded);
+        list($token_email, $expiry_str, $token) = explode('|', $decoded);
+
+        // Verificar la integridad del token
+        $data = $token_email . '|' . $expiry_str;
+        $valid_token = hash_hmac('sha256', $data, $key);
+
+        if (hash_equals($valid_token, $token) && hash_equals($token_email, $email)) {
+          $expiry = new DateTime($expiry_str);
+          $now = new DateTime();
+
+          if ($now < $expiry) {
+            Session::getInstance()->set("token", $token_encoded);
+            Session::getInstance()->set("email", $email);
+
+            header("Location: /page/");
+
+            // echo "Token válido y correo verificado. Acceso concedido.";
+
+            // Aquí puedes incluir el contenido protegido
+          } else {
+            // echo "El token ha expirado.";
+            Session::getInstance()->set("error", "El token ha expirado.");
+            Session::getInstance()->set("tipo", "danger");
+            header("Location: /page/error/");
+          }
+        } else {
+
+          Session::getInstance()->set("error", "Token o correo no válido");
+          Session::getInstance()->set("tipo", "danger");
+          header("Location: /page/index/procesarcorreo?token={$token_encoded}");
+        }
+      } else {
+        // echo "Correo no válido.";
+        Session::getInstance()->set("error", "Correo no válido.");
+        Session::getInstance()->set("tipo", "danger");
+        header("Location: /page/error/");
+      }
+    }
+  }
+
   /**
    * Genera la Informacion necesaria para editar o crear un  ingreso  y muestra su formulario
    *
@@ -111,10 +284,11 @@ class Page_indexController extends Page_mainController
    *
    * @return void.
    */
+  #region INSERTAR INGRESO
   public function insertAction()
   {
     // Habilitar la visualización de todos los errores.
-    error_reporting(E_ALL);
+    //error_reporting(E_ALL);
 
     // Establecer el diseño de la página como 'blanco'.
     $this->setLayout('blanco');
@@ -133,17 +307,27 @@ class Page_indexController extends Page_mainController
 
         // Consultar si ya existe una entrada con la cédula proporcionada.
         $cedula = $data['ingreso_cedula'];
-        $ingresoExistente = $this->mainModel->getList(" ingreso_cedula = '$cedula'");
+        $ingresoExistente = $this->mainModel->getList(" ingreso_cedula = '$cedula'  ");
+
+        // Consultar si ya existe una entrada con el email proporcionado.
+        $email = $data['ingreso_email '];
+        $emailExistente = $this->mainModel->getList(" ingreso_email  = '$email'");
 
         // Si existe una entrada con la cédula, redirigir con un error.
         if ($ingresoExistente) {
           header('Location: ' . $this->route . '?error=1&cc=' . $cedula . '');
           return;
         }
+        if ($emailExistente) {
+          header('Location: ' . $this->route . '?error=2&emailValidacion=' . $email . '');
+          return;
+        }
+
 
         // Insertar los datos principales en la base de datos.
         $id = $this->mainModel->insert($data);
 
+        #region INSERTAR DEPENDIENTES
         // Insertar Dependientes.
         $dependientesModel = new Page_Model_DbTable_Dependientes();
         $nombres = $_POST['dependiente_nombre'];
@@ -173,6 +357,7 @@ class Page_indexController extends Page_mainController
           }
         }
 
+        #region INSERTAR CON QUIEN VIVE
         // Insertar Con quien vive.
         $viveConModel = new Page_Model_DbTable_Conquienesvive();
         $viveConNombres = $_POST['vive_con_nombre'];
@@ -205,6 +390,8 @@ class Page_indexController extends Page_mainController
           }
         }
 
+
+        #region INSERTAR FORMACION ACADEMICA
         // Insertar Formación Académica.
         $formacionModel = new Page_Model_DbTable_Datosacademicos();
         $datos_academicos_formacion = $_POST['datos_academicos_formacion'];
@@ -231,6 +418,7 @@ class Page_indexController extends Page_mainController
           }
         }
 
+        #region INSERTAR DATOS LABORALES
         // Insertar Datos Laborales.
         $datosLaboralesModel = new Page_Model_DbTable_Datoslaborales();
         $datos_laborales_empleo = $_POST['datos_laborales_empleo'];
@@ -267,18 +455,302 @@ class Page_indexController extends Page_mainController
           }
         }
 
-        // Registrar el ingreso principal en el log.
-        $data['ingreso_id'] = $id;
-        $data['log_log'] = print_r($data, true);
-        $data['log_tipo'] = 'CREAR INGRESO';
-        $logModel = new Administracion_Model_DbTable_Log();
-        $logModel->insert($data);
+        if ($id) {
+          // Crear una instancia del modelo de envío de correo electrónico
+          $mailModel = new Core_Model_Sendingemail($this->_view);
+
+          // Enviar correo de REGISTRO
+          $mail = $mailModel->sendIngreso(1);
+          Session::getInstance()->set("token", null);
+          Session::getInstance()->set("email", null);
+
+          // Registrar el ingreso principal en el log.
+          $data['ingreso_id'] = $id;
+          $data['log_log'] = print_r($data, true);
+          $data['log_tipo'] = 'CREAR INGRESO';
+          $logModel = new Administracion_Model_DbTable_Log();
+          $logModel->insert($data);
+          if ($mail == 1) {
+            header("Location: /page/envio?ingreso={$id}&estado=1");
+          } else {
+            header("Location: /page/envio?ingreso={$id}&estado=2");
+          }
+        } else {
+          Session::getInstance()->set("error", "Hubo un error al momento de guardar el registro, por favor intente nuevamente.");
+          Session::getInstance()->set("tipo", "danger");
+
+          header('Location: /page/error/ ');
+        }
       }
       // Redirigir a la ruta especificada (esta línea está comentada).
       // header('Location: ' . $this->route . '' . '');
     }
   }
 
+
+  #region ACTUALIZAR INGRESO
+
+  public function updateAction()
+  {
+    $this->setLayout('blanco');
+    error_reporting(E_ALL);
+    $csrf = $this->_getSanitizedParam("csrf");
+    if (Session::getInstance()->get('csrf')[$this->_getSanitizedParam("csrf_section")] == $csrf) {
+      $id = $this->_getSanitizedParam("id");
+      $content = $this->mainModel->getById($id);
+      if ($content->ingreso_id) {
+        $data = $this->getData();
+        //$this->mainModel->update($data, $id);
+        $data['ingreso_id'] = $id;
+        $data['log_log'] = print_r($data, true);
+        $data['log_tipo'] = 'EDITAR INGRESO';
+        $logModel = new Administracion_Model_DbTable_Log();
+        $logModel->insert($data);
+
+        #region EDITAR DEPENDIENTES
+        // Insertar Dependientes.
+        $dependientesModel = new Page_Model_DbTable_Dependientes();
+        $dependienteIds = $_POST['dependiente_id'];
+        $nombres = $_POST['dependiente_nombre'];
+        $parentescos = $_POST['dependiente_parentesco'];
+        $dependientesArray = [];
+
+        foreach ($nombres as $index => $nombre) {
+          $dependienteId = $dependienteIds[$index];
+
+          $parentesco = $parentescos[$index];
+          if ($dependienteId != '' && $nombre != '' && $parentesco != '') {
+            $dependientesArray = [
+              'dependiente_nombre' => $nombre,
+              'dependiente_parentesco' => $parentesco,
+              'dependiente_cedula_colaborador' => $data['ingreso_cedula']
+            ];
+
+            // Actualizar el dependiente en la base de datos.
+            $dependientesModel->update($dependientesArray, $dependienteId);
+
+            // Registrar en el log si la inserción fue exitosa.
+            if ($dependienteId) {
+              $data['ingreso_id'] = $content->ingreso_id;
+              $data['log_log'] = print_r($dependientesArray, true);
+              $data['log_tipo'] = 'EDITAR DEPENDIENTE';
+              $logModel = new Administracion_Model_DbTable_Log();
+              $logModel->insert($data);
+            }
+          } else  if ($nombre != '' && $parentesco != '' && $dependienteId == '') {
+
+            $dependientesArray = [
+              'dependiente_nombre' => $nombre,
+              'dependiente_parentesco' => $parentesco,
+              'dependiente_cedula_colaborador' => $data['ingreso_cedula']
+            ];
+
+            // Insertar el dependiente en la base de datos.
+            $idDependiente = $dependientesModel->insert($dependientesArray);
+            // Registrar en el log si la inserción fue exitosa.
+            if ($idDependiente) {
+              $data['ingreso_id'] = $content->ingreso_id;
+              $data['log_log'] = print_r($dependientesArray, true);
+              $data['log_tipo'] = 'CREAR DEPENDIENTE';
+              $logModel = new Administracion_Model_DbTable_Log();
+              $logModel->insert($data);
+            }
+          }
+        }
+
+
+        #region EDITAR VIVE CON
+        // Insertar Con quien vive.
+        $viveConModel = new Page_Model_DbTable_Conquienesvive();
+        $viveConIds = $_POST['vive_con_id'];
+
+        $viveConNombres = $_POST['vive_con_nombre'];
+        $viveConParentescos = $_POST['vive_con_parentesco'];
+        $viveConTelefonos = $_POST['vive_con_telefono'];
+        $viveConArray = [];
+
+        foreach ($viveConNombres as $index => $nombre) {
+          $viveConId = $viveConIds[$index];
+          $parentesco = $viveConParentescos[$index];
+          $telefono = $viveConTelefonos[$index];
+          if ($viveConId != '' && $nombre != '' && $parentesco != '' && $telefono != '') {
+            $viveConArray = [
+              'vive_con_nombre' => $nombre,
+              'vive_con_parentesco' => $parentesco,
+              'vive_con_telefono' => $telefono,
+              'vive_con_cedula_colaborador' => $data['ingreso_cedula']
+            ];
+
+            // Actualizar en la base de datos.
+            $viveConModel->update($viveConArray, $viveConId);
+
+            // Registrar en el log si la inserción fue exitosa.
+            if ($viveConId) {
+              $data['ingreso_id'] = $viveConId;
+              $data['log_log'] = print_r($viveConArray, true);
+              $data['log_tipo'] = 'CREAR VIVE CON';
+              $logModel = new Administracion_Model_DbTable_Log();
+              $logModel->insert($data);
+            }
+          } else if ($viveConId == '' && $nombre != '' && $parentesco != '' && $telefono != '') {
+            $viveConArray = [
+              'vive_con_nombre' => $nombre,
+              'vive_con_parentesco' => $parentesco,
+              'vive_con_telefono' => $telefono,
+              'vive_con_cedula_colaborador' => $data['ingreso_cedula']
+            ];
+
+            // Insertar en la base de datos.
+            $idViveCon = $viveConModel->insert($viveConArray);
+
+            // Registrar en el log si la inserción fue exitosa.
+            if ($idViveCon) {
+              $data['ingreso_id'] = $idViveCon;
+              $data['log_log'] = print_r($viveConArray, true);
+              $data['log_tipo'] = 'CREAR VIVE CON';
+              $logModel = new Administracion_Model_DbTable_Log();
+              $logModel->insert($data);
+            }
+          }
+        }
+
+        #region EDITAR FORMACION ACADEMICA
+        // Insertar Formación Académica.
+        $formacionModel = new Page_Model_DbTable_Datosacademicos();
+        $datos_academicos_id = $_POST['datos_academicos_id'];
+        $datos_academicos_formacion = $_POST['datos_academicos_formacion'];
+
+        $datosArray = [];
+
+        foreach ($datos_academicos_formacion as $index => $formacion) {
+          $datos_academicos_id = $datos_academicos_id[$index];
+          if ($formacion != '' && $datos_academicos_id != '') {
+            $datosArray = [
+              'datos_academicos_formacion' => $formacion,
+              'datos_academicos_cedula_colaborador' => $data['ingreso_cedula']
+            ];
+
+            // Editar en la base de datos.
+            $formacionModel->update($datosArray, $datos_academicos_id);
+
+            // Registrar en el log si la inserción fue exitosa.
+            if ($datos_academicos_id) {
+              $data['ingreso_id'] = $datos_academicos_id;
+              $data['log_log'] = print_r($datosArray, true);
+              $data['log_tipo'] = 'CREAR FORMACION ACADEMICA';
+              $logModel = new Administracion_Model_DbTable_Log();
+              $logModel->insert($data);
+            }
+          } else if ($formacion != '' && $datos_academicos_id == '') {
+            $datosArray = [
+              'datos_academicos_formacion' => $formacion,
+              'datos_academicos_cedula_colaborador' => $data['ingreso_cedula']
+            ];
+
+            // Insertar en la base de datos.
+            $idFormacion = $formacionModel->insert($datosArray);
+
+            // Registrar en el log si la inserción fue exitosa.
+            if ($idFormacion) {
+              $data['ingreso_id'] = $idFormacion;
+              $data['log_log'] = print_r($datosArray, true);
+              $data['log_tipo'] = 'CREAR FORMACION ACADEMICA';
+              $logModel = new Administracion_Model_DbTable_Log();
+              $logModel->insert($data);
+            }
+          }
+        }
+
+
+        #region INSERTAR DATOS LABORALES
+        // Insertar Datos Laborales.
+        $datosLaboralesModel = new Page_Model_DbTable_Datoslaborales();
+        $datos_laborales_id = $_POST['datos_laborales_id'];
+        $datos_laborales_empleo = $_POST['datos_laborales_empleo'];
+        $datos_laborales_fecha_inicio = $_POST['datos_laborales_fecha_inicio'];
+        $datos_laborales_fecha_fin = $_POST['datos_laborales_fecha_fin'];
+        $datos_laborales_motivo_retiro = $_POST['datos_laborales_motivo_retiro'];
+        $datosLaboralesArray = [];
+
+        foreach ($datos_laborales_empleo as $index => $formacionLaboral) {
+          $datosLaboralesId = $datos_laborales_id[$index];
+          $fechaInicio = $datos_laborales_fecha_inicio[$index];
+          $fechaFin = $datos_laborales_fecha_fin[$index];
+          $motivoRetiro = $datos_laborales_motivo_retiro[$index];
+
+          if ($datosLaboralesId != '' && $formacionLaboral != '' && $fechaInicio != '' && $fechaFin != '' && $motivoRetiro != '') {
+            $datosLaboralesArray = [
+              'datos_laborales_empleo' => $formacionLaboral,
+              'datos_laborales_fecha_inicio' => $fechaInicio,
+              'datos_laborales_fecha_fin' => $fechaFin,
+              'datos_laborales_motivo_retiro' => $motivoRetiro,
+              'datos_laborales_cedula_colaborador' => $data['ingreso_cedula']
+            ];
+
+            // Editar en la base de datos.
+            $datosLaboralesModel->update($datosLaboralesArray, $datosLaboralesId);
+
+            // Registrar en el log si la inserción fue exitosa.
+            if ($datosLaboralesId) {
+              $data['ingreso_id'] = $datosLaboralesId;
+              $data['log_log'] = print_r($datosLaboralesArray, true);
+              $data['log_tipo'] = 'CREAR DATOS LABORALES';
+              $logModel = new Administracion_Model_DbTable_Log();
+              $logModel->insert($data);
+            }
+          } else if ($datosLaboralesId == '' && $formacionLaboral != '' && $fechaInicio != '' && $fechaFin != '' && $motivoRetiro != '') {
+            $datosLaboralesArray = [
+              'datos_laborales_empleo' => $formacionLaboral,
+              'datos_laborales_fecha_inicio' => $fechaInicio,
+              'datos_laborales_fecha_fin' => $fechaFin,
+              'datos_laborales_motivo_retiro' => $motivoRetiro,
+              'datos_laborales_cedula_colaborador' => $data['ingreso_cedula']
+            ];
+
+            // Insertar en la base de datos.
+            $idDatosLaborales = $datosLaboralesModel->insert($datosLaboralesArray);
+
+            // Registrar en el log si la inserción fue exitosa.
+            if ($idDatosLaborales) {
+              $data['ingreso_id'] = $idDatosLaborales;
+              $data['log_log'] = print_r($datosLaboralesArray, true);
+              $data['log_tipo'] = 'CREAR DATOS LABORALES';
+              $logModel = new Administracion_Model_DbTable_Log();
+              $logModel->insert($data);
+            }
+          }
+        }
+
+        if ($id) {
+          // Crear una instancia del modelo de envío de correo electrónico
+          $mailModel = new Core_Model_Sendingemail($this->_view);
+
+          // Enviar correo de REGISTRO
+          $mail = $mailModel->sendIngreso(1);
+          Session::getInstance()->set("token", null);
+          Session::getInstance()->set("email", null);
+
+          // Registrar el ingreso principal en el log.
+          $data['ingreso_id'] = $id;
+          $data['log_log'] = print_r($data, true);
+          $data['log_tipo'] = 'CREAR INGRESO';
+          $logModel = new Administracion_Model_DbTable_Log();
+          $logModel->insert($data);
+          if ($mail == 1) {
+            header("Location: /page/envio?ingreso={$id}&estado=1");
+          } else {
+            header("Location: /page/envio?ingreso={$id}&estado=2");
+          }
+        } else {
+          Session::getInstance()->set("error", "Hubo un error al momento de guardar el registro, por favor intente nuevamente.");
+          Session::getInstance()->set("tipo", "danger");
+
+          header('Location: /page/error/ ');
+        }
+      }
+    }
+    // header('Location: ' . $this->route . '' . '');
+  }
 
 
 
@@ -289,7 +761,7 @@ class Page_indexController extends Page_mainController
    */
   private function getData()
   {
-    $data = array();
+    $data = [];
     $data['ingreso_fecha_ingreso']  = $this->_getSanitizedParam("ingreso_fecha_ingreso");
     $data['ingreso_nombre'] = $this->_getSanitizedParam("ingreso_nombre");
     $data['ingreso_apellido'] = $this->_getSanitizedParam("ingreso_apellido");
@@ -324,7 +796,7 @@ class Page_indexController extends Page_mainController
 
   private function getEstadoCivil()
   {
-    $array = array();
+    $array = [];
     $array['Casado'] = 'Casado';
     $array['Union Libre'] = 'Unión Libre';
     $array['Soltero'] = 'Soltero';
@@ -339,7 +811,7 @@ class Page_indexController extends Page_mainController
    */
   private function getIngresosexo()
   {
-    $array = array();
+    $array = [];
     $array['Femenimo'] = 'Femenimo';
     $array['Masculino'] = 'Masculino';
 
@@ -354,7 +826,7 @@ class Page_indexController extends Page_mainController
    */
   private function getIngresovivecasa()
   {
-    $array = array();
+    $array = [];
     $array['Familiar'] = 'Familiar';
     $array['Alquilada'] = 'Alquilada';
     $array['Propia'] = 'Propia';
@@ -369,9 +841,53 @@ class Page_indexController extends Page_mainController
     $cedula = $this->_getSanitizedParam("cc");
     $data = $this->mainModel->getList(" ingreso_cedula = '$cedula'");
     if ($data) {
-      echo json_encode(array('status' => 'error', 'message' => 'La cedula ya se encuentra registrada'));
+      echo json_encode(['status' => 'error', 'message' => 'La cedula ya se encuentra registrada']);
     } else {
-      echo json_encode(array('status' => 'success', 'message' => 'Cedula valida'));
+      echo json_encode(['status' => 'success', 'message' => 'Cedula valida']);
     }
+  }
+
+  public function elimiardependienteAction()
+  {
+
+    $this->setLayout('blanco');
+    $id = $this->_getSanitizedParam("id");
+    $dependientesModel = new Page_Model_DbTable_Dependientes();
+    $dependientesModel->deleteRegister($id);
+
+    echo json_encode(['title' => 'Listo!', 'status' => 'success', 'text' => 'Registro eliminado exitosamente.']);
+  }
+
+  public function eliminarviveconAction()
+  {
+
+    $this->setLayout('blanco');
+    $id = $this->_getSanitizedParam("id");
+    $viveConModel = new Page_Model_DbTable_Conquienesvive();
+    $viveConModel->deleteRegister($id);
+
+    echo json_encode(['title' => 'Listo!', 'status' => 'success', 'text' => 'Registro eliminado exitosamente.']);
+  }
+
+  public function eliminarformacionAction()
+  {
+
+    $this->setLayout('blanco');
+    $id = $this->_getSanitizedParam("id");
+    $datosAcademicosModel = new Page_Model_DbTable_Datosacademicos();
+    $datosAcademicosModel->deleteRegister($id);
+
+    echo json_encode(['title' => 'Listo!', 'status' => 'success', 'text' => 'Registro eliminado exitosamente.']);
+  }
+
+  public function eliminardatoslaboralesAction()
+  {
+
+    $this->setLayout('blanco');
+    $id = $this->_getSanitizedParam("id");
+    $datosLaboralesModel = new Page_Model_DbTable_Datoslaborales();
+    $datosLaboralesModel->deleteRegister($id);
+
+    echo json_encode(['title' => 'Listo!', 'status' => 'success', 'text' => 'Registro eliminado exitosamente.']);
   }
 }

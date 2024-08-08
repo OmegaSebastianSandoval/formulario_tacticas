@@ -92,7 +92,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const recaptchaResponse = grecaptcha.getResponse();
     if (recaptchaResponse.length === 0) {
       event.preventDefault();
-      alert("Por favor, verifica el captcha antes de enviar el formulario.");
+      Swal.fire({
+        title: "Error",
+        text: "Por favor, verifica el captcha antes de enviar el formulario.",
+        icon: "info",
+        confirmButtonText: "Continuar",
+        confirmButtonColor: "#19A9C9",
+      });
     }
   });
 
@@ -147,8 +153,4 @@ document.addEventListener("DOMContentLoaded", () => {
       contenedorPareja.classList.add("d-none");
     }
   });
-
-
-  
-  
 });
