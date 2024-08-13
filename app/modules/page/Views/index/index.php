@@ -132,13 +132,14 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     <label class="input-group">
 
 
-                        <select class="form-control    " id="ingreso_estado_civil" name="ingreso_estado_civil" required>
-                            <option value="" disabled>Seleccione...</option>
+                        <select class="form-control" id="ingreso_estado_civil" name="ingreso_estado_civil" required>
+                            <option value="">Seleccione...</option>
                             <?php foreach ($this->list_ingreso_estado_civil as $key => $value) { ?>
                                 <option value="<?php echo $key; ?>" <?php if ($this->getObjectVariable($this->content, 'ingreso_estado_civil') == $key) {
-                                                                        echo "checked";
-                                                                    } ?> /> <?= $value; ?></option>
+                                                                        echo "selected";
+                                                                    } ?>> <?= $value; ?></option>
                             <?php } ?>
+
                         </select>
                     </label>
                     <div class="help-block with-errors"></div>
@@ -151,17 +152,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
 
-
-                    <label class="control-label">Carnet blanco (Si, No)</label>
-                    <br>
-
-                    <input type="checkbox" name="ingreso_carnet_blanco" <?php if ($this->getObjectVariable($this->content, 'ingreso_carnet_blanco') == 1) {
-                                                                            echo "checked";
-                                                                        } ?> value="1" class="form-control switch-form "></input>
-                    <div class="help-block with-errors"></div>
-                </div>
                 <div class="col-12 col-md-6 col-lg-2 form-group">
                     <label for="ingreso_numero_hijos" class="control-label">N&uacute;mero de hijos</label>
                     <label class="input-group">
@@ -171,7 +162,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     <div class="help-block with-errors"></div>
                 </div>
                 <div class="col-12 col-md-6 col-lg-2 form-group">
-                    <label for="ingreso_numero_seguro_social" class="control-label">N&uacute;mero del seguro social</label>
+                    <label for="ingreso_numero_seguro_social" class="control-label">Num. del seguro social</label>
                     <label class="input-group">
 
                         <input type="text" value="<?= $this->content->ingreso_numero_seguro_social; ?>" name="ingreso_numero_seguro_social" id="ingreso_numero_seguro_social" class="form-control" maxlength="45">
@@ -202,6 +193,21 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-12 col-md-6 col-lg-2 form-group">
+
+
+                    <label class="control-label">Carnet blanco<br> (Si, No)</label>
+
+
+                    <input type="checkbox" name="ingreso_carnet_blanco" <?php if ($this->getObjectVariable($this->content, 'ingreso_carnet_blanco') == 1) {
+                                                                            echo "checked";
+                                                                        } ?> value="1" class="form-control switch-form "></input>
+                    <div class="help-block with-errors"></div>
+                </div>
                 <div class="col-12 col-md-6 col-lg-2 form-group">
                     <label class="control-label">Carnet verde<br> (Si, No)</label>
                     <br>
@@ -210,6 +216,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                                             } ?> name="ingreso_carnet_verde" value="1" class="form-control switch-form "></input>
                     <div class="help-block with-errors"></div>
                 </div>
+
                 <div class="col-12 col-md-6 col-lg-2 form-group">
                     <label class="control-label">Afiliado al seguro<br> social (Si, No)</label>
                     <br>
@@ -219,6 +226,9 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                                             } ?> name="ingreso_afiliado_seguro_social" value="1" class="form-control switch-form "></input>
                     <div class="help-block with-errors"></div>
                 </div>
+            </div>
+
+            <div class="row">
                 <div class="col-12 col-md-6 col-lg-4 form-group">
                     <label for="ingreso_nombre_madre" class="control-label">Nombre de la madre</label>
                     <label class="input-group">
@@ -252,10 +262,10 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     <div class="help-block with-errors"></div>
                 </div>
                 <div class="col-12 col-md-6 col-lg-2 form-group">
-                    <label class="control-label">Vive en casa</label>
+                    <label for="ingreso_vive_casa" class="control-label">Vive en casa</label>
                     <label class="input-group">
 
-                        <select class="form-control" name="ingreso_vive_casa" required>
+                        <select class="form-control" name="ingreso_vive_casa" id="ingreso_vive_casa" required>
                             <option value="">Seleccione...</option>
                             <?php foreach ($this->list_ingreso_vive_casa as $key => $value) { ?>
                                 <option <?php if ($this->getObjectVariable($this->content, "ingreso_vive_casa") == $key) {
@@ -267,7 +277,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     <div class="help-block with-errors"></div>
                 </div>
                 <div class="col-12 col-lg-6 form-group">
-                    <label for="ingreso_hobby" class="form-label">Hobby</label>
+                    <label for="ingreso_hobby" class="control-label">Hobby</label>
                     <textarea name="ingreso_hobby" id="ingreso_hobby" class="form-control" rows="3"><?= $this->content->ingreso_hobby; ?></textarea>
                     <div class="help-block with-errors"></div>
                 </div>
@@ -287,11 +297,20 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                         <div class="col-12 col-md-6 form-group">
                             <label for="nombres_familia">Nombres</label>
                             <input type="hidden" name="dependiente_id[]" value="<?php echo $dependiente->dependiente_id ?>">
-                            <input type="text" class="form-control" name="dependiente_nombre[]" value="<?php echo $dependiente->dependiente_nombre ?>" required>
+                            <input type="text" class="form-control" name="dependiente_nombre[]" value="<?php echo $dependiente->dependiente_nombre ?>">
                         </div>
                         <div class="col-9 col-md-5 form-group">
                             <label for="apellidos_familia">Parentesco</label>
-                            <input type="text" class="form-control" name="dependiente_parentesco[]" value="<?php echo $dependiente->dependiente_parentesco ?>" required>
+                            <!--  <input type="text" class="form-control" name="dependiente_parentesco[]" value="<?php echo $dependiente->dependiente_parentesco ?>"> -->
+                            <select class="form-control" name="dependiente_parentesco[]">
+                                <option value="">Seleccione...</option>
+                                <?php foreach ($this->list_ingreso_parentesco as $key => $value) { ?>
+                                    <option <?php if ($dependiente->dependiente_parentesco == $key) {
+                                                echo "selected";
+                                            } ?> value="<?php echo $key; ?>" /> <?= $value; ?></option>
+                                <?php } ?>
+                            </select>
+
                         </div>
                         <div class="col-3 col-md-1 d-flex justify-content-center align-items-center">
                             <button type="button" title="Eliminar registro" class="btn btn-danger btn-sm" onclick="eliminarRegistro(this, <?php echo $dependiente->dependiente_id ?>, 1)">X</button>
@@ -313,7 +332,16 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     <label for="dependiente_parentesco[]" class="control-label">Parentesco</label>
                     <label class="input-group">
 
-                        <input type="text" name="dependiente_parentesco[]" class="form-control">
+                        <!-- <input type="text" name="dependiente_parentesco[]" class="form-control"> -->
+
+
+                        <select class="form-control" name="dependiente_parentesco[]">
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($this->list_ingreso_parentesco as $key => $value) { ?>
+                                <option value="<?php echo $key; ?>"> <?= $value; ?></option>
+                            <?php } ?>
+                        </select>
+
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
@@ -345,7 +373,15 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                         <div class="col-12 col-md-6 col-lg-4  form-group">
                             <label for="vive_con_parentesco[]" class="control-label">Parentesco</label>
                             <label class="input-group">
-                                <input type="text" name="vive_con_parentesco[]" class="form-control" value="<?php echo $vive->vive_con_parentesco ?>" required>
+                                <!--  <input type="text" name="vive_con_parentesco[]" class="form-control" value="<?php echo $vive->vive_con_parentesco ?>" > -->
+                                <select class="form-control" name="vive_con_parentesco[]">
+                                    <option value="">Seleccione...</option>
+                                    <?php foreach ($this->list_ingreso_parentesco as $key => $value) { ?>
+                                        <option <?php if ($vive->vive_con_parentesco == $key) {
+                                                    echo "selected";
+                                                } ?> value="<?php echo $key; ?>" /> <?= $value; ?></option>
+                                    <?php } ?>
+                                </select>
                             </label>
                         </div>
                         <div class="col-10 col-md-5 col-lg-3 form-group">
@@ -375,7 +411,13 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     <label for="vive_con_parentesco[]" class="control-label">Parentesco</label>
                     <label class="input-group">
 
-                        <input type="text" name="vive_con_parentesco[]" class="form-control">
+                        <!-- <input type="text" name="vive_con_parentesco[]" class="form-control"> -->
+                        <select class="form-control" name="vive_con_parentesco[]">
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($this->list_ingreso_parentesco as $key => $value) { ?>
+                                <option  value="<?php echo $key; ?>"> <?= $value; ?></option>
+                            <?php } ?>
+                        </select>
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
@@ -538,7 +580,15 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
         </div>
         <div class="col-9 col-md-5 form-group">
             <label for="apellidos_familia">Parentesco</label>
-            <input type="text" class="form-control" name="dependiente_parentesco[]" required>
+           <!-- <input type="text" class="form-control" name="dependiente_parentesco[]" required>-->
+              <select class="form-control" name="dependiente_parentesco[]">
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($this->list_ingreso_parentesco as $key => $value) { ?>
+                                <option <?php if ($this->getObjectVariable($this->content, "dependiente_parentesco") == $key) {
+                                            echo "selected";
+                                        } ?> value="<?php echo $key; ?>" /> <?= $value; ?></option>
+                            <?php } ?>
+                        </select>
         </div>
         <div class="col-3 col-md-1 d-flex justify-content-center align-items-center">
             <button type="button" title="Eliminar campos" class="btn btn-danger btn-sm" onclick="EliminarCampo(this)">X</button>
@@ -561,7 +611,13 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                 <div class="col-12 col-md-6 col-lg-4  form-group">
                     <label for="vive_con_parentesco[]" class="control-label">Parentesco</label>
                     <label class="input-group">
-                        <input type="text" name="vive_con_parentesco[]" class="form-control" required >
+                        <!--<input type="text" name="vive_con_parentesco[]" class="form-control" required >-->
+                          <select class="form-control" name="vive_con_parentesco[]">
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($this->list_ingreso_parentesco as $key => $value) { ?>
+                                <option  value="<?php echo $key; ?>"> <?= $value; ?></option>
+                            <?php } ?>
+                        </select>
                     </label>
                 </div>
                 <div class="col-10 col-md-6 col-lg-3  form-group">

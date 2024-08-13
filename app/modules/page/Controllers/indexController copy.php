@@ -90,7 +90,6 @@ class Page_indexController extends Page_mainController
     $this->_view->list_ingreso_estado_civil = $this->getEstadoCivil();
     $this->_view->list_ingreso_sexo = $this->getIngresosexo();
     $this->_view->list_ingreso_vive_casa = $this->getIngresovivecasa();
-    $this->_view->list_ingreso_parentesco = $this->getParentesco();
 
     // Obtener parámetros sanitizados de la solicitud y asignarlos a la vista
     $this->_view->error = $this->_getSanitizedParam("error");
@@ -144,7 +143,8 @@ class Page_indexController extends Page_mainController
         } else {
           $this->_view->routeform = $this->route . "/insert";
         }
-      } else {
+      }else{
+
       }
     } else {
       // Manejar caso de token no válido
@@ -175,60 +175,53 @@ class Page_indexController extends Page_mainController
     $this->setLayout('blanco');
     $token_encoded = $this->_getSanitizedParam('token');
 
-    if (!$token_encoded) {
+    if ($token_encoded) {
+      $key = 't@ctic_sp+nama2024'; // Debe ser la misma clave secreta compartida
+      $decoded = base64_decode($token_encoded);
+      list($email, $expiry_str, $token) = explode('|', $decoded);
+
+      // Verificar la integridad del token
+      $data = $email . '|' . $expiry_str;
+      $valid_token = hash_hmac('sha256', $data, $key);
+
+      if (hash_equals($valid_token, $token)) {
+        $expiry = new DateTime($expiry_str);
+        $now = new DateTime();
+
+        if ($now < $expiry) {
+          // echo "Token válido. Acceso concedido.";
+          // Aquí puedes incluir el contenido protegido
+          // Token válido y no expirado, redirigir a la página de verificación de correo
+
+
+          
+          header("Location: /page/index/procesarcorreo?token=" . urlencode($token_encoded));
+          exit;
+        } else {
+          // echo "El token ha expirado.";
+          Session::getInstance()->set("error", "El token ha expirado.");
+          Session::getInstance()->set("tipo", "danger");
+
+          header("Location: /page/error/");
+        }
+      } else {
+        // echo "Token no válido.";
+        Session::getInstance()->set("error", "Token no válido.");
+        Session::getInstance()->set("tipo", "danger");
+        header("Location: /page/error/");
+      }
+    } else {
       // echo "Token no proporcionado.";
       Session::getInstance()->set("error", "Token no proporcionado.");
       Session::getInstance()->set("tipo", "warning");
       header("Location: /page/error/");
-      return;
     }
-
-    $key = 't@ctic_sp+nama2024'; // Debe ser la misma clave secreta compartida
-    $decoded = base64_decode($token_encoded);
-    list($email, $expiry_str, $token) = explode('|', $decoded);
-
-    // Verificar la integridad del token
-    $data = $email . '|' . $expiry_str;
-    $valid_token = hash_hmac('sha256', $data, $key);
-
-    if (!hash_equals($valid_token, $token)) {
-
-      // echo "Token no válido.";
-      Session::getInstance()->set("error", "Token no válido.");
-      Session::getInstance()->set("tipo", "danger");
-      header("Location: /page/error/");
-      return;
-    }
-
-    $expiry = new DateTime($expiry_str);
-    $now = new DateTime();
-
-    if (!($now < $expiry)) {
-      // echo "El token ha expirado.";
-      Session::getInstance()->set("error", "El token ha expirado.");
-      Session::getInstance()->set("tipo", "danger");
-
-      header("Location: /page/error/");
-      return;
-    }
-
-
-    // echo "Token válido. Acceso concedido.";
-    // Aquí puedes incluir el contenido protegido
-    // Token válido y no expirado, redirigir a la página de verificación de correo
-
-    header("Location: /page/index/procesarcorreo?token=" . urlencode($token_encoded));
-    exit;
   }
 
 
   #region VALIDAR EL CORREO DEL TOKEN
   public function procesarcorreoAction()
   {
-    Session::getInstance()->set("token", "");
-    Session::getInstance()->set("email", "");
-
-
     $token_encoded = $this->_getSanitizedParam('token');
     $this->_view->error = Session::getInstance()->get("error");
     $this->_view->tipo = Session::getInstance()->get("tipo");
@@ -242,54 +235,48 @@ class Page_indexController extends Page_mainController
       $email = $this->_getSanitizedParam('email');
 
 
-      if (!$email && !$token_encoded) {
+      if ($email && $token_encoded) {
+        $key = 't@ctic_sp+nama2024'; // Debe ser la misma clave secreta compartida
+        $decoded = base64_decode($token_encoded);
+        list($token_email, $expiry_str, $token) = explode('|', $decoded);
+
+        // Verificar la integridad del token
+        $data = $token_email . '|' . $expiry_str;
+        $valid_token = hash_hmac('sha256', $data, $key);
+
+        if (hash_equals($valid_token, $token) && hash_equals($token_email, $email)) {
+          $expiry = new DateTime($expiry_str);
+          $now = new DateTime();
+
+          if ($now < $expiry) {
+            Session::getInstance()->set("token", $token_encoded);
+            Session::getInstance()->set("email", $email);
+
+            header("Location: /page/");
+
+            // echo "Token válido y correo verificado. Acceso concedido.";
+
+            // Aquí puedes incluir el contenido protegido
+          } else {
+            // echo "El token ha expirado.";
+            Session::getInstance()->set("error", "El token ha expirado.");
+            Session::getInstance()->set("tipo", "danger");
+            header("Location: /page/error/");
+          }
+        } else {
+
+          Session::getInstance()->set("error", "Token o correo no válido");
+          Session::getInstance()->set("tipo", "danger");
+          header("Location: /page/index/procesarcorreo?token={$token_encoded}");
+        }
+      } else {
         // echo "Correo no válido.";
         Session::getInstance()->set("error", "Correo no válido.");
         Session::getInstance()->set("tipo", "danger");
         header("Location: /page/error/");
-        return;
       }
-
-
-      $key = 't@ctic_sp+nama2024'; // Debe ser la misma clave secreta compartida
-      $decoded = base64_decode($token_encoded);
-      list($token_email, $expiry_str, $token) = explode('|', $decoded);
-
-      // Verificar la integridad del token
-      $data = $token_email . '|' . $expiry_str;
-      $valid_token = hash_hmac('sha256', $data, $key);
-
-      if (!(hash_equals($valid_token, $token) && hash_equals($token_email, $email))) {
-        Session::getInstance()->set("error", "Token o correo no válido");
-        Session::getInstance()->set("tipo", "danger");
-        header("Location: /page/index/procesarcorreo?token={$token_encoded}");
-        return;
-      }
-
-      $expiry = new DateTime($expiry_str);
-      $now = new DateTime();
-
-      if (!($now < $expiry)) {
-        // echo "El token ha expirado.";
-        Session::getInstance()->set("error", "El token ha expirado.");
-        Session::getInstance()->set("tipo", "danger");
-        header("Location: /page/error/");
-        return;
-      }
-
-      Session::getInstance()->set("token", $token_encoded);
-      Session::getInstance()->set("email", $email);
-
-      header("Location: /page/");
-
-      // echo "Token válido y correo verificado. Acceso concedido.";
-
-      // Aquí puedes incluir el contenido protegido
-
     }
   }
-
-
 
   /**
    * Genera la Informacion necesaria para editar o crear un  ingreso  y muestra su formulario
@@ -512,7 +499,7 @@ class Page_indexController extends Page_mainController
   public function updateAction()
   {
     $this->setLayout('blanco');
-    // error_reporting(E_ALL);
+    error_reporting(E_ALL);
     $csrf = $this->_getSanitizedParam("csrf");
     if (Session::getInstance()->get('csrf')[$this->_getSanitizedParam("csrf_section")] == $csrf) {
       $id = $this->_getSanitizedParam("id");
@@ -745,7 +732,7 @@ class Page_indexController extends Page_mainController
           $mailModel = new Core_Model_Sendingemail($this->_view);
 
           // Enviar correo de REGISTRO
-          $mail = $mailModel->sendIngreso($id);
+          $mail = $mailModel->sendIngreso(1);
           Session::getInstance()->set("token", null);
           Session::getInstance()->set("email", null);
 
@@ -852,42 +839,6 @@ class Page_indexController extends Page_mainController
 
     return $array;
   }
-
-  /**
-   * Genera los valores del campo Sexo.
-   *
-   * @return array cadena con los valores del campo Sexo.
-   */
-  private function getParentesco()
-  {
-    $array = [];
-    $array['Padre'] = 'Padre';
-    $array['Madre'] = 'Madre';
-    $array['Hermano'] = 'Hermano';
-    $array['Hermana'] = 'Hermana';
-    $array['Esposo'] = 'Esposo';
-    $array['Esposa'] = 'Esposa';
-    $array['Hijo'] = 'Hijo';
-    $array['Hija'] = 'Hija';
-    $array['Abuelo'] = 'Abuelo';
-    $array['Abuela'] = 'Abuela';
-    $array['Nieto'] = 'Nieto';
-    $array['Nieta'] = 'Nieta';
-    $array['Tío'] = 'Tío';
-    $array['Tía'] = 'Tía';
-    $array['Primo'] = 'Primo';
-    $array['Prima'] = 'Prima';
-    $array['Sobrino'] = 'Sobrino';
-    $array['Sobrina'] = 'Sobrina';
-    $array['Suegro'] = 'Suegro';
-    $array['Suegra'] = 'Suegra';
-    $array['Cuñado'] = 'Cuñado';
-    $array['Cuñada'] = 'Cuñada';
-
-    return $array;
-  }
-
-
 
   public function validarcedulaAction()
   {
