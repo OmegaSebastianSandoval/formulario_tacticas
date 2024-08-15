@@ -11,10 +11,10 @@ $maxFechaInicioTrabajo = strtotime('-1 day', strtotime(date('Y-m-d')));
 $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
 // echo $maxFechaInicioTrabajo
 ?>
-<div class="container contenedor-formulario mt-3 mb-5 ">
-    <span class="label-fecha">Fecha de ingreso: <span><?= date("Y-m-d H:m:s") ?></span></span>
-    <h3>INFORMACIÓN DEL COLABORADOR</h3>
 
+<div class="container contenedor-formulario mt-3 mb-5 mx-auto ">
+
+    <span class="label-fecha">Fecha de ingreso: <span><?= date("Y-m-d H:m:s") ?></span></span>
     <?php if ($this->error == 1) { ?>
         <div class="alert alert-danger text-center mt-3" role="alert">
             <strong>¡Error!</strong> La cédula <?= $this->cc ?> ya se encuentra registrada.
@@ -28,7 +28,12 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
     <?php } ?>
 
     <form class="text-left" enctype="multipart/form-data" method="post" action="<?php echo $this->routeform; ?>" data-bs-toggle="validator" id="form-ingreso">
-        <div class="content-dashboard">
+        <div class="content-dashboard dashboard-datos">
+            <div class=" d-flex justify-content-start ">
+                <h3 class="my-0 mb-4"> <i class="fa-solid fa-user" title="Ingreso"></i>
+                    Información del colaborador</h3>
+            </div>
+
             <?php if ($this->content->ingreso_id) { ?>
                 <input type="hidden" name="id" value="<?php echo $this->content->ingreso_id ?>">
             <?php } ?>
@@ -41,7 +46,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
 
             <div class="row">
                 <input type="hidden" name="ingreso_fecha_ingreso" value="<?= date("Y-m-d H:m:s") ?>">
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_nombre" class="control-label">Nombres</label>
                     <label class="input-group">
 
@@ -49,7 +54,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_apellido" class="control-label">Apellidos</label>
                     <label class="input-group">
 
@@ -57,7 +62,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_fecha_nacimiento" class="control-label">Fecha nacimiento</label>
                     <label class="input-group">
 
@@ -67,15 +72,24 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_lugar_nacimiento" class="control-label">Lugar nacimiento</label>
                     <label class="input-group">
 
-                        <input type="text" name="ingreso_lugar_nacimiento" id="ingreso_lugar_nacimiento" value="<?= $this->content->ingreso_lugar_nacimiento; ?>" class="form-control" required>
+                        <!-- <input type="text" name="ingreso_lugar_nacimiento" id="ingreso_lugar_nacimiento" value="<?= $this->content->ingreso_lugar_nacimiento; ?>" class="form-control" required> -->
+                        <select class="form-control" name="ingreso_lugar_nacimiento" id="ingreso_lugar_nacimiento">
+
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($this->list_ciudad_nacimiento as $key => $value) { ?>
+                                <option <?php if ($this->getObjectVariable($this->content, "ingreso_lugar_nacimiento") == $key) {
+                                            echo "selected";
+                                        } ?> value="<?php echo $key; ?>"> <?= $value; ?></option>
+                            <?php } ?>
+                        </select>
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <div class="tooltip1">
                         <div class="tooltiptext">Esta cédula ya se encuentra registrada</div>
                     </div>
@@ -87,7 +101,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_nacionalidad" class="control-label">Nacionalidad</label>
                     <label class="input-group">
 
@@ -95,7 +109,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_direccion_casa" class="control-label">Direcci&oacute;n casa</label>
                     <label class="input-group">
 
@@ -103,7 +117,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_telefono" class="control-label">Tel&eacute;fono</label>
                     <label class="input-group">
 
@@ -111,7 +125,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_telefono_casa" class="control-label">Tel&eacute;fono casa</label>
                     <label class="input-group">
 
@@ -119,7 +133,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-4 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-4 form-group">
                     <label for="ingreso_email" class="control-label">Email</label>
                     <label class="input-group">
 
@@ -127,7 +141,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_estado_civil" class="control-label">Estado civil</label>
                     <label class="input-group">
 
@@ -144,7 +158,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div id="contenedor-input-pareja" class="col-12 col-md-6 col-lg-2 form-group d-none">
+                <div id="contenedor-input-pareja" class="col-12 col-md-6 col-lg-3 col-xl-2 form-group d-none">
                     <label for="ingreso_nombre_pareja" class="control-label">Nombre de la pareja</label>
                     <label class="input-group">
 
@@ -153,7 +167,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     <div class="help-block with-errors"></div>
                 </div>
 
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_numero_hijos" class="control-label">N&uacute;mero de hijos</label>
                     <label class="input-group">
 
@@ -161,7 +175,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_numero_seguro_social" class="control-label">Num. del seguro social</label>
                     <label class="input-group">
 
@@ -170,7 +184,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     <div class="help-block with-errors"></div>
                 </div>
 
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_edad" class="control-label">Edad</label>
                     <label class="input-group">
 
@@ -178,7 +192,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label class="control-label">Sexo</label>
                     <label class="input-group">
 
@@ -197,18 +211,18 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
 
             <div class="row">
 
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
 
 
                     <label class="control-label">Carnet blanco<br> (Si, No)</label>
-
+                    <br>
 
                     <input type="checkbox" name="ingreso_carnet_blanco" <?php if ($this->getObjectVariable($this->content, 'ingreso_carnet_blanco') == 1) {
                                                                             echo "checked";
                                                                         } ?> value="1" class="form-control switch-form "></input>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label class="control-label">Carnet verde<br> (Si, No)</label>
                     <br>
                     <input type="checkbox" <?php if ($this->getObjectVariable($this->content, 'ingreso_carnet_verde') == 1) {
@@ -217,7 +231,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     <div class="help-block with-errors"></div>
                 </div>
 
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label class="control-label">Afiliado al seguro<br> social (Si, No)</label>
                     <br>
 
@@ -229,7 +243,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             </div>
 
             <div class="row">
-                <div class="col-12 col-md-6 col-lg-4 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-3 form-group">
                     <label for="ingreso_nombre_madre" class="control-label">Nombre de la madre</label>
                     <label class="input-group">
 
@@ -237,7 +251,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_telefono_madre" class="control-label">Tel&eacute;fono de la madre</label>
                     <label class="input-group">
 
@@ -245,7 +259,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-4 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-3 form-group">
                     <label for="ingreso_nombre_padre" class="control-label">Nombre del padre</label>
                     <label class="input-group">
 
@@ -253,7 +267,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_telefono_padre" class="control-label">Tel&eacute;fono del padre</label>
                     <label class="input-group">
 
@@ -261,7 +275,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-2 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
                     <label for="ingreso_vive_casa" class="control-label">Vive en casa</label>
                     <label class="input-group">
 
@@ -284,12 +298,16 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                 <!-- <input type="hidden" name="ingreso_fecha_solicitud" value="">
                 <input type="hidden" name="ingreso_estado_solicitud" value=""> -->
             </div>
-            <hr>
+            
 
         </div>
 
-        <h4>DEPENDIENTES</h4>
-        <div class="content-dashboard">
+       
+        <div class="content-dashboard dashboard-datos">
+            <div class=" d-flex justify-content-start ">
+                <h3 class="my-0 mb-4"> <i class="fa-solid fa-users" title="Ingreso"></i>
+                    Dependientes</h3>
+            </div>
 
             <?php if ($this->content->ingreso_id) { ?>
                 <?php foreach ($this->dependientes as $key => $dependiente) { ?>
@@ -353,24 +371,28 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             <div class="d-flex justify-content-center mb-4">
                 <a href="javascript:void(0);" onclick="AgregarCampos(event)" class="btn btn-outline-dark">Incluir más personas</a>
             </div>
-            <hr>
+            
         </div>
 
 
-        <h4>CON QUIENES VIVE</h4>
-        <div class="content-dashboard">
+       
+        <div class="content-dashboard dashboard-datos">
+            <div class=" d-flex justify-content-start ">
+                <h3 class="my-0 mb-4"> <i class="fa-solid fa-house-user" title="Ingreso"></i>
+                    Con quienes vive</h3>
+            </div>
 
             <?php if ($this->content->ingreso_id) { ?>
                 <?php foreach ($this->viveCon as $key => $vive) { ?>
                     <div class="row">
-                        <div class="col-12 col-md-6 col-lg-4 form-group">
+                        <div class="col-12 col-md-6 col-lg-3 col-xl-4 form-group">
                             <label for="vive_con_nombre[]" class="control-label">Nombre</label>
                             <label class="input-group">
                                 <input type="hidden" name="vive_con_id[]" value="<?php echo $vive->vive_con_id ?>">
                                 <input type="text" name="vive_con_nombre[]" class="form-control" value="<?php echo $vive->vive_con_nombre ?>" required>
                             </label>
                         </div>
-                        <div class="col-12 col-md-6 col-lg-4  form-group">
+                        <div class="col-12 col-md-6 col-lg-3 col-xl-4  form-group">
                             <label for="vive_con_parentesco[]" class="control-label">Parentesco</label>
                             <label class="input-group">
                                 <!--  <input type="text" name="vive_con_parentesco[]" class="form-control" value="<?php echo $vive->vive_con_parentesco ?>" > -->
@@ -399,7 +421,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             <?php } ?>
 
             <div class="row">
-                <div class="col-12 col-md-6 col-lg-4 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-4 form-group">
                     <label for="vive_con_nombre[]" class="control-label">Nombre</label>
                     <label class="input-group">
 
@@ -407,7 +429,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-4  form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-4  form-group">
                     <label for="vive_con_parentesco[]" class="control-label">Parentesco</label>
                     <label class="input-group">
 
@@ -415,7 +437,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                         <select class="form-control" name="vive_con_parentesco[]">
                             <option value="">Seleccione...</option>
                             <?php foreach ($this->list_ingreso_parentesco as $key => $value) { ?>
-                                <option  value="<?php echo $key; ?>"> <?= $value; ?></option>
+                                <option value="<?php echo $key; ?>"> <?= $value; ?></option>
                             <?php } ?>
                         </select>
                     </label>
@@ -437,11 +459,15 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             <div class="d-flex justify-content-center mb-4">
                 <a href="javascript:void(0);" onclick="AgregarCamposViveCon(event)" class="btn btn-outline-dark">Incluir más personas</a>
             </div>
-            <hr>
+            
         </div>
 
-        <h4>FORMACION ACADÉMICA</h4>
-        <div class="content-dashboard">
+     
+        <div class="content-dashboard dashboard-datos">
+            <div class=" d-flex justify-content-start ">
+                <h3 class="my-0 mb-4"> <i class="fa-solid fa-graduation-cap" title="Ingreso"></i>
+                    Formación académica</h3>
+            </div>
 
             <?php if ($this->content->ingreso_id) { ?>
                 <?php foreach ($this->datosAcademicos as $key => $vive) { ?>
@@ -475,12 +501,16 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             <div class="d-flex justify-content-center mb-4">
                 <a href="javascript:void(0);" onclick="AgregarCamposFormacion(event)" class="btn btn-outline-dark">Incluir más formación</a>
             </div>
-            <hr>
+           
         </div>
 
 
-        <h4>DATOS LABORALES</h4>
-        <div class="content-dashboard">
+        
+        <div class="content-dashboard dashboard-datos">
+            <div class=" d-flex justify-content-start ">
+                <h3 class="my-0 mb-4"> <i class="fa-solid fa-briefcase" title="Ingreso"></i>
+                    Datos Laborales</h3>
+            </div>
             <?php if ($this->content->ingreso_id) { ?>
                 <?php foreach ($this->datosLaborales as $key => $vive) { ?>
                     <div class="row">
@@ -554,7 +584,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             <div class="d-flex justify-content-center mb-4">
                 <a href="javascript:void(0);" onclick="AgregarCamposLaborales(event)" class="btn btn-outline-dark">Incluir más datos laborales</a>
             </div>
-            <hr>
+           
         </div>
 
 
@@ -563,7 +593,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
         </div>
 
         <div class="botones-acciones mt-3 d-flex justify-content-center">
-            <button class="btn btn-guardar" type="submit">Enviar</button>
+            <button class="btn btn-guardar disable-on-click px-5" type="submit">Enviar</button>
         </div>
     </form>
 </div>
@@ -575,11 +605,11 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
         campo.className = 'row';
         campo.innerHTML = `
         <div class="col-12 col-md-6 form-group">
-            <label for="nombres_familia">Nombres</label>
+            <label for="nombres_familia"  class="control-label">Nombres</label>
             <input type="text" class="form-control" name="dependiente_nombre[]" required>
         </div>
         <div class="col-9 col-md-5 form-group">
-            <label for="apellidos_familia">Parentesco</label>
+            <label for="apellidos_familia"  class="control-label">Parentesco</label>
            <!-- <input type="text" class="form-control" name="dependiente_parentesco[]" required>-->
               <select class="form-control" name="dependiente_parentesco[]">
                             <option value="">Seleccione...</option>
@@ -602,13 +632,13 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
         const campo = document.createElement('div');
         campo.className = 'row';
         campo.innerHTML = `
-         <div class="col-12 col-md-6 col-lg-4 form-group">
+         <div class="col-12 col-md-6 col-lg-3 col-xl-4 form-group">
                     <label for="vive_con_nombre[]" class="control-label">Nombre</label>
                     <label class="input-group">
                         <input type="text" name="vive_con_nombre[]" class="form-control" required >
                     </label>
                 </div>
-                <div class="col-12 col-md-6 col-lg-4  form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-4  form-group">
                     <label for="vive_con_parentesco[]" class="control-label">Parentesco</label>
                     <label class="input-group">
                         <!--<input type="text" name="vive_con_parentesco[]" class="form-control" required >-->
@@ -800,8 +830,8 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
     const inputsTelefonoCasa = document.querySelectorAll('#ingreso_telefono_casa');
 
     // Aplicar la función a cada input
-    inputsTelefono.forEach(input => limitarLongitud(input, 14));
-    inputsTelefonoCasa.forEach(input => limitarLongitud(input, 12));
+    inputsTelefono.forEach(input => limitarLongitud(input, 12));
+    inputsTelefonoCasa.forEach(input => limitarLongitud(input, 11));
 
 
     function alerta(titulo, icono, texto) {

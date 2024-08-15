@@ -1,11 +1,36 @@
 <div class="container contenedor-error h-100 d-flex justify-content-center align-items-center">
     <?php if ($this->error) { ?>
-        <div class="alert alert-<?= $this->tipo ?>  w-100 text-center" role="alert">
-            <?= $this->error ?>
+        <div class="alerta alerta-<?= $this->tipo ?>   text-center shadow-sm" role="alert">
+            <?php if ($this->tipo === 'success') { ?>
+
+                <i class="fa-solid fa-circle-check"></i>
+            <?php } else if ($this->tipo === 'warning') { ?>
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            <?php } else { ?>
+                <i class="fa-solid fa-circle-xmark"></i>
+            <?php } ?>
+            <div>
+
+                <span class="titulo-alerta">Solicitud de <br> Ingreso de Personal</span>
+            </div>
+
+            <div class="mensaje mt-4">
+                <p> <?= $this->error ?></p>
+            </div>
         </div>
     <?php } else { ?>
-        <div class="alert alert-danger w-100 text-center" role="alert">
-            Ha ocurrido un error inesperado.
+        <div class="alerta alerta-danger  text-center shadow-sm" role="alert">
+
+            <i class="fa-solid fa-circle-xmark"></i>
+
+            <div>
+
+                <span class="titulo-alerta">Solicitud de <br> Ingreso de Personal</span>
+            </div>
+
+            <div class="mensaje mt-5">
+                <p> Ha ocurrido un error inesperado. </p>
+            </div>
         </div>
     <?php } ?>
 </div>
@@ -15,7 +40,8 @@
         min-height: calc(100dvh - 125px);
 
     }
-    .contenedor-error{
+
+    .contenedor-error {
         min-height: calc(100dvh - 225px);
 
     }

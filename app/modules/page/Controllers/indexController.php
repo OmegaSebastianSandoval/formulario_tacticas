@@ -91,6 +91,7 @@ class Page_indexController extends Page_mainController
     $this->_view->list_ingreso_sexo = $this->getIngresosexo();
     $this->_view->list_ingreso_vive_casa = $this->getIngresovivecasa();
     $this->_view->list_ingreso_parentesco = $this->getParentesco();
+		$this->_view->list_ciudad_nacimiento = $this->getCiudad();
 
     // Obtener parámetros sanitizados de la solicitud y asignarlos a la vista
     $this->_view->error = $this->_getSanitizedParam("error");
@@ -307,7 +308,7 @@ class Page_indexController extends Page_mainController
   public function insertAction()
   {
     // Habilitar la visualización de todos los errores.
-    error_reporting(E_ALL);
+    // error_reporting(E_ALL);
 
     // Establecer el diseño de la página como 'blanco'.
     $this->setLayout('blanco');
@@ -513,6 +514,7 @@ class Page_indexController extends Page_mainController
   {
     $this->setLayout('blanco');
     // error_reporting(E_ALL);
+    // return;
     $csrf = $this->_getSanitizedParam("csrf");
     if (Session::getInstance()->get('csrf')[$this->_getSanitizedParam("csrf_section")] == $csrf) {
       $id = $this->_getSanitizedParam("id");
@@ -773,6 +775,8 @@ class Page_indexController extends Page_mainController
 
 
 
+  #region GET DATA
+
   /**
    * Recibe la informacion del formulario y la retorna en forma de array para la edicion y creacion de Ingreso.
    *
@@ -813,15 +817,39 @@ class Page_indexController extends Page_mainController
   }
 
 
+
+  #region GET CIUDADES
+
+  /**
+	 * Genera los valores del campo Ciudad.
+	 *
+	 * @return array cadena con los valores del campo Ciudad.
+	 */
+	private function getCiudad()
+	{
+		$modelData = new Page_Model_DbTable_Dependciudad();
+		$data = $modelData->getList("", "codigo DESC");
+		$array = array();
+		foreach ($data as $key => $value) {
+			$array[$value->codigo] = $value->nombre;
+		}
+		return $array;
+	}
+
+
+  #region GET ESTADO CIVIL
   private function getEstadoCivil()
   {
     $array = [];
-    $array['Casado'] = 'Casado';
-    $array['Union Libre'] = 'Unión Libre';
-    $array['Soltero'] = 'Soltero';
+    $array['Soltero(a)'] = 'Soltero(a)';
+		$array['Casado(a)'] = 'Casado(a)';
+		$array['Viudo(a)'] = 'Viudo(a)';
     return $array;
   }
 
+
+
+  #region GET GENERO
 
   /**
    * Genera los valores del campo Sexo.
@@ -838,6 +866,7 @@ class Page_indexController extends Page_mainController
   }
 
 
+  #region GET VIVE EN CASA
   /**
    * Genera los valores del campo Vive en casa.
    *
@@ -852,6 +881,9 @@ class Page_indexController extends Page_mainController
 
     return $array;
   }
+
+
+  #region GET PARENTESCO
 
   /**
    * Genera los valores del campo Sexo.
@@ -888,6 +920,9 @@ class Page_indexController extends Page_mainController
   }
 
 
+
+
+  #region VALLIDAR CEDULA
 
   public function validarcedulaAction()
   {

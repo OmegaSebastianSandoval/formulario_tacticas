@@ -15,7 +15,9 @@
   --primary: #19A9C9;
   --secondary: #686868;
   --third: #0c667b;
-  --body: #F5FAFD
+  --body: #F5FAFD;
+  --verde: #20C019;
+
 }
 
 
@@ -24,7 +26,7 @@ body {
   overflow-x: hidden;
   height: 100dvh;
   /* background-color: #f7f7f7; */
-  background-color: #e8e8e8;
+  background-color: #F5FAFD;
 
 }
 
@@ -43,12 +45,24 @@ header {
   /* position: fixed; */
   z-index: 3;
   top: 0;
-  background-color: #e8e8e8;
+  background-color: #F5FAFD;
 
   width: 100%;
-  height: 125px;
-  box-shadow: 0 2px 2px 0 hsla(0, 0%, 0%, 0.1);
+  /* height: 125px; */
+  padding: 10px 0;
+  /* box-shadow: 0 2px 2px 0 hsla(0, 0%, 0%, 0.1); */
 
+}
+
+header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 51%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 1px;
+  background-color: #68686824;
 }
 
 header .container,
@@ -66,9 +80,9 @@ header img {
 }
 
 header h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
   color: var(--primary);
+  font-weight: 600;
+  font-size: 2rem;
   margin: 0;
   text-align: center;
 }
@@ -101,6 +115,22 @@ header h2 {
 /*******************
  FORUMLARIO INICIO 
  *******************/
+.dashboard-datos {
+  background-color: #FFF;
+  padding: 20px;
+  border: 1px solid rgb(210, 210, 210);
+  margin-bottom: 20px;
+}
+
+.dashboard-datos h3 {
+  color: #FFF !important;
+  background-color: var(--primary);
+  width: 100%;
+  text-align: start !important;
+  padding: 10px;
+}
+
+
 .contenedor-formulario {
   /* background-color: #e8e8e8; */
 
@@ -109,17 +139,17 @@ header h2 {
 }
 
 .contenedor-formulario h3 {
-  margin-top: 15px;
-  color: var(--secondary);
-  font-weight: 600;
-  font-size: 1.4rem;
+  color: var(--primary);
+  text-align: center;
+  font-weight: 500;
+  font-size: 1.2em;
 }
 
 .contenedor-formulario h4 {
   margin-top: 15px;
-  color: var(--secondary);
+  color: var(--primary);
   font-weight: 600;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 
@@ -143,8 +173,63 @@ header h2 {
   margin-bottom: 15px;
 }
 
+.input-group>.input-group-prepend>.input-group-text {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.fondo-verde {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.input-icono {
+  width: 50px;
+  text-align: center;
+  display: inline-block;
+}
+
+.input-icono-grande {
+  width: 80px;
+  text-align: center;
+  display: inline-block;
+}
+
+.btn-guardar {
+  background: var(--primary);
+  color: #FFFFFF;
+  font-weight: 500;
+  font-size: 16px;
+  padding-left: 30px;
+  padding-right: 30px;
+  border: 1px solid var(--primary);
+  transition: all 300ms;
+}
+
+.btn-guardar:hover {
+  background: #FFFFFF;
+  color: var(--primary);
+}
+
+.btn-cancelar {
+  background: #fe1e26;
+  color: #FFFFFF;
+  font-weight: 500;
+  font-size: 16px;
+  padding-left: 30px;
+  padding-right: 30px;
+  border: 1px solid #fe1e26;
+  transition: all 300ms;
+
+}
+
+.btn-cancelar:hover {
+  background: #FFFFFF;
+  color: #fe1e26;
+}
+
 .form-control {
-  height: 54px;
+  /* height: 54px;
   border-radius: 5px;
   background: white;
   margin-bottom: 15px;
@@ -152,7 +237,7 @@ header h2 {
   padding: 0 20px;
   font-weight: 300;
   font-size: 14px;
-  color: #4B4B4B;
+  color: #4B4B4B; */
 }
 
 .control-label {
@@ -161,7 +246,7 @@ header h2 {
   font-size: 0.9rem;
 }
 
-.contenedor-formulario form button {
+/* .contenedor-formulario form button {
   font-size: 18px;
   display: inline-block;
   outline: 0;
@@ -176,14 +261,14 @@ header h2 {
   height: 2.6em;
   text-shadow: 0 1px 0 rgb(0 0 0 / 40%);
   transition: box-shadow 0.15s ease, transform 0.15s ease;
-}
-.btn-danger{
+} */
+.btn-danger {
   background: #e95050 !important;
   height: fit-content !important;
   padding: 10px !important;
-  width: 40px !important;
-  height: 40px !important;
-  margin-bottom: 8px !important;
+  width: 35px !important;
+  height: 35px !important;
+  margin-top: 8px !important;
   display: flex !important;
   justify-content: center;
   align-items: center;
@@ -191,7 +276,7 @@ header h2 {
 
 }
 
-
+/* 
 .contenedor-formulario form button:hover {
   box-shadow: 0px 0.1em 0.2em rgb(45 35 66 / 40%), 0px 0.4em 0.7em -0.1em rgb(45 35 66 / 30%), inset 0px -0.1em 0px var(--third);
   background: var(--primary);
@@ -203,7 +288,7 @@ header h2 {
 .contenedor-formulario form button:active {
   box-shadow: inset 0px 0.1em 0.6em var(--third);
   transform: translateY(0em);
-}
+} */
 
 
 
@@ -243,3 +328,50 @@ header h2 {
 /*******************
  FORUMLARIO FIN 
  *******************/
+
+
+ /*******************
+ALERTA INICIO
+ *******************/
+ .alerta {
+  background-color: #FFF;
+  height: 300px;
+  width: 400px;
+  margin: auto;
+  position: relative;
+  padding: 20px;
+  /* box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1); */
+}
+
+.alerta i {
+
+  font-size: 50px;
+  /* position:absolute; */
+  top: -45px;
+
+}
+
+.alerta.alerta-success i {
+  color: var(--verde);
+}
+.alerta.alerta-danger i {
+  color: #e95050;
+}
+
+.alerta.alerta-warning i {
+color: #ffca2c;
+}
+
+.titulo-alerta {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.alerta .mensaje p {
+  text-wrap: pretty;
+}
+
+/* ************
+ALERTA FIN
+****************< */

@@ -99,7 +99,18 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmButtonText: "Continuar",
         confirmButtonColor: "#19A9C9",
       });
+      return;
     }
+
+    
+    // Selecciona todos los botones con la clase 'disable-on-click'
+    const button = document.querySelector(".disable-on-click");
+    
+    // Inhabilita el botón
+    button.disabled = true;
+    button.style.pointerEvents = "none"; // Desactiva el clic en el enlace
+    button.style.opacity = "0.5"; // Cambia la apariencia para mostrar que está desactivado
+    // event.preventDefault();
   });
 
   const cedulaInput = document.getElementById("ingreso_cedula");
@@ -116,6 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
             disableAllInputs();
           } else {
             // In case you want to re-enable the inputs if the status is not "error"
+            tooltip.classList.remove("active");
             enableAllInputs();
           }
         });
@@ -147,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const contenedorPareja = document.getElementById("contenedor-input-pareja");
 
   estadoCivil.addEventListener("change", () => {
-    if (estadoCivil.value === "Casado") {
+    if (estadoCivil.value === "Casado(a)") {
       contenedorPareja.classList.remove("d-none");
     } else {
       contenedorPareja.classList.add("d-none");
