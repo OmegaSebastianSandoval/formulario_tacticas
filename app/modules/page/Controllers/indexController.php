@@ -85,13 +85,21 @@ class Page_indexController extends Page_mainController
     $viveConModel = new Page_Model_DbTable_Conquienesvive();
     $datosAcademicosModel = new Page_Model_DbTable_Datosacademicos();
     $datosLaboralesModel = new Page_Model_DbTable_Datoslaborales();
+    $datosEmergenciaModel = new Page_Model_DbTable_Datosemergencia();
 
     // Asignar listas predefinidas al objeto de la vista
     $this->_view->list_ingreso_estado_civil = $this->getEstadoCivil();
     $this->_view->list_ingreso_sexo = $this->getIngresosexo();
     $this->_view->list_ingreso_vive_casa = $this->getIngresovivecasa();
     $this->_view->list_ingreso_parentesco = $this->getParentesco();
-		$this->_view->list_ciudad_nacimiento = $this->getCiudad();
+    $this->_view->list_ciudad_nacimiento = $this->getCiudad();
+    $this->_view->list_cargo = $this->getCargo();
+    $this->_view->list_empresa = $this->getEmpresa();
+    $this->_view->list_talla_sueter = $this->getTallaSueter();
+    $this->_view->list_talla_pantalon = $this->getTallaPantalon();
+    $this->_view->list_talla_calzado = $this->getTallaCalzado();
+
+
 
     // Obtener parámetros sanitizados de la solicitud y asignarlos a la vista
     $this->_view->error = $this->_getSanitizedParam("error");
@@ -103,7 +111,7 @@ class Page_indexController extends Page_mainController
     $email = Session::getInstance()->get("email");
     $this->_view->routeform = $this->route . "/insert";
 
-    if ($token && $email) {
+    if ($token && $email || $_GET['prueba'] == 1) {
       // Asignar token y email a la vista
       $this->_view->token_encoded = $token;
       $this->_view->email = $email;
@@ -139,7 +147,7 @@ class Page_indexController extends Page_mainController
           $this->_view->viveCon = $viveConModel->getList("vive_con_cedula_colaborador = '$content->ingreso_cedula'");
           $this->_view->datosAcademicos = $datosAcademicosModel->getList("datos_academicos_cedula_colaborador = '$content->ingreso_cedula'");
           $this->_view->datosLaborales = $datosLaboralesModel->getList("datos_laborales_cedula_colaborador = '$content->ingreso_cedula'");
-
+          $this->_view->datosEmergencia = $datosEmergenciaModel->getList("datos_emergencia_cedula_colaborador = '$content->ingreso_cedula'");
           $this->_view->content = $content;
           $this->_view->routeform = $this->route . "/update";
         } else {
@@ -346,6 +354,41 @@ class Page_indexController extends Page_mainController
 
         // Insertar los datos principales en la base de datos.
         $id = $this->mainModel->insert($data);
+        #region INSERTAR CONTACTOS DE EMERGENCIA
+        $contactosEmergenciaModel = new Page_Model_DbTable_Datosemergencia();
+        $nombres = $_POST['datos_emergencia_nombre'];
+        $telefonos = $_POST['datos_emergencia_telefono'];
+        $parentescos = $_POST['datos_emergencia_parentesco'];
+        $dependientesArray = [];
+
+        foreach ($nombres as $index => $nombre) {
+          $parentesco = $parentescos[$index];
+          $telefono = $telefonos[$index];
+          if ($nombre != '' && $parentesco != '' && $telefono != '') {
+            $contactosEmergenciaArray = [
+              'datos_emergencia_nombre' => $nombre,
+              'datos_emergencia_telefono' => $telefono,
+              'datos_emergencia_parentesco' => $parentesco,
+              'datos_emergencia_cedula_colaborador' => $data['ingreso_cedula']
+            ];
+
+            // Insertar el CONTACRTO DE EMERGENCIA en la base de datos.
+            $idEmergencia = $contactosEmergenciaModel->insert($contactosEmergenciaArray);
+
+            // Registrar en el log si la inserción fue exitosa.
+            if ($idEmergencia) {
+              $data['ingreso_id'] = $idEmergencia;
+              $data['log_log'] = print_r($contactosEmergenciaArray, true);
+              $data['log_tipo'] = 'CREAR CONTACTO EMERGENCIA';
+              $logModel = new Administracion_Model_DbTable_Log();
+              $logModel->insert($data);
+            }
+          }
+        }
+
+
+
+
 
         #region INSERTAR DEPENDIENTES
         // Insertar Dependientes.
@@ -441,6 +484,7 @@ class Page_indexController extends Page_mainController
         #region INSERTAR DATOS LABORALES
         // Insertar Datos Laborales.
         $datosLaboralesModel = new Page_Model_DbTable_Datoslaborales();
+        $datos_laborales_empresa = $_POST['datos_laborales_empresa'];
         $datos_laborales_empleo = $_POST['datos_laborales_empleo'];
         $datos_laborales_fecha_inicio = $_POST['datos_laborales_fecha_inicio'];
         $datos_laborales_fecha_fin = $_POST['datos_laborales_fecha_fin'];
@@ -448,12 +492,15 @@ class Page_indexController extends Page_mainController
         $datosLaboralesArray = [];
 
         foreach ($datos_laborales_empleo as $index => $formacionLaboral) {
+          $empresa = $datos_laborales_empresa[$index];
           $fechaInicio = $datos_laborales_fecha_inicio[$index];
           $fechaFin = $datos_laborales_fecha_fin[$index];
           $motivoRetiro = $datos_laborales_motivo_retiro[$index];
 
+
           if ($formacionLaboral != '' && $fechaInicio != '' && $fechaFin != '' && $motivoRetiro != '') {
             $datosLaboralesArray = [
+              'datos_laborales_empresa' => $empresa,
               'datos_laborales_empleo' => $formacionLaboral,
               'datos_laborales_fecha_inicio' => $fechaInicio,
               'datos_laborales_fecha_fin' => $fechaFin,
@@ -527,6 +574,64 @@ class Page_indexController extends Page_mainController
         $data['log_tipo'] = 'EDITAR INGRESO';
         $logModel = new Administracion_Model_DbTable_Log();
         $logModel->insert($data);
+
+
+
+        #region EDITAR DATOS DE CONTACTO DE EMERGENCIA
+        // Insertar Dependientes.
+        $contacotsEmergenciaModel = new Page_Model_DbTable_Datosemergencia();
+        $contactoEmergenciaIds = $_POST['datos_emergencia_id'];
+
+        $contactoEmergenciaNombres = $_POST['datos_emergencia_nombre'];
+        $contactoEmergenciaParentescos = $_POST['datos_emergencia_parentesco'];
+        $contactoEmergenciaTelefonos = $_POST['datos_emergencia_telefono'];
+        $contactoEmergenciaArray = [];
+
+        foreach ($contactoEmergenciaNombres as $index => $nombre) {
+          $contactoEmergenciaId = $contactoEmergenciaIds[$index];
+          $parentesco = $contactoEmergenciaParentescos[$index];
+          $telefono = $contactoEmergenciaTelefonos[$index];
+          if ($contactoEmergenciaId != '' && $nombre != '' && $parentesco != '' && $telefono != '') {
+            $contactoEmergenciaArray = [
+              'datos_emergencia_nombre' => $nombre,
+              'datos_emergencia_parentesco' => $parentesco,
+              'datos_emergencia_telefono' => $telefono,
+              'datos_emergencia_cedula_colaborador' => $data['ingreso_cedula']
+            ];
+
+            // Actualizar en la base de datos.
+            $contacotsEmergenciaModel->update($contactoEmergenciaArray, $contactoEmergenciaId);
+
+            // Registrar en el log si la inserción fue exitosa.
+            if ($contactoEmergenciaId) {
+              $data['ingreso_id'] = $contactoEmergenciaId;
+              $data['log_log'] = print_r($contactoEmergenciaArray, true);
+              $data['log_tipo'] = 'EDITAR CONTACTOS EMERGENCIA';
+              $logModel = new Administracion_Model_DbTable_Log();
+              $logModel->insert($data);
+            }
+          } else if ($contactoEmergenciaId == '' && $nombre != '' && $parentesco != '' && $telefono != '') {
+            $contactoEmergenciaArray = [
+              'datos_emergencia_nombre' => $nombre,
+              'datos_emergencia_parentesco' => $parentesco,
+              'datos_emergencia_telefono' => $telefono,
+              'datos_emergencia_cedula_colaborador' => $data['ingreso_cedula']
+            ];
+
+            // Insertar en la base de datos.
+            $idContactoEmergencia = $contacotsEmergenciaModel->insert($contactoEmergenciaArray);
+
+            // Registrar en el log si la inserción fue exitosa.
+            if ($idContactoEmergencia) {
+              $data['ingreso_id'] = $idContactoEmergencia;
+              $data['log_log'] = print_r($idContactoEmergencia, true);
+              $data['log_tipo'] = 'CREAR  CONTACTOS EMERGENCIA';
+              $logModel = new Administracion_Model_DbTable_Log();
+              $logModel->insert($data);
+            }
+          }
+        }
+
 
         #region EDITAR DEPENDIENTES
         // Insertar Dependientes.
@@ -683,7 +788,7 @@ class Page_indexController extends Page_mainController
         }
 
 
-        #region INSERTAR DATOS LABORALES
+        #region EDITAR DATOS LABORALES
         // Insertar Datos Laborales.
         $datosLaboralesModel = new Page_Model_DbTable_Datoslaborales();
         $datos_laborales_id = $_POST['datos_laborales_id'];
@@ -691,6 +796,8 @@ class Page_indexController extends Page_mainController
         $datos_laborales_fecha_inicio = $_POST['datos_laborales_fecha_inicio'];
         $datos_laborales_fecha_fin = $_POST['datos_laborales_fecha_fin'];
         $datos_laborales_motivo_retiro = $_POST['datos_laborales_motivo_retiro'];
+        $datos_laborales_empresa = $_POST['datos_laborales_empresa'];
+
         $datosLaboralesArray = [];
 
         foreach ($datos_laborales_empleo as $index => $formacionLaboral) {
@@ -698,9 +805,11 @@ class Page_indexController extends Page_mainController
           $fechaInicio = $datos_laborales_fecha_inicio[$index];
           $fechaFin = $datos_laborales_fecha_fin[$index];
           $motivoRetiro = $datos_laborales_motivo_retiro[$index];
+          $empresa = $datos_laborales_empresa[$index];
 
           if ($datosLaboralesId != '' && $formacionLaboral != '' && $fechaInicio != '' && $fechaFin != '' && $motivoRetiro != '') {
             $datosLaboralesArray = [
+              'datos_laborales_empresa' => $empresa,
               'datos_laborales_empleo' => $formacionLaboral,
               'datos_laborales_fecha_inicio' => $fechaInicio,
               'datos_laborales_fecha_fin' => $fechaFin,
@@ -721,6 +830,7 @@ class Page_indexController extends Page_mainController
             }
           } else if ($datosLaboralesId == '' && $formacionLaboral != '' && $fechaInicio != '' && $fechaFin != '' && $motivoRetiro != '') {
             $datosLaboralesArray = [
+              'datos_laborales_empresa' => $empresa,
               'datos_laborales_empleo' => $formacionLaboral,
               'datos_laborales_fecha_inicio' => $fechaInicio,
               'datos_laborales_fecha_fin' => $fechaFin,
@@ -813,6 +923,15 @@ class Page_indexController extends Page_mainController
     $data['ingreso_vive_casa'] = $this->_getSanitizedParam("ingreso_vive_casa");
     $data['ingreso_fecha_solicitud'] = date("Y-m-d H:i:s");
     $data['ingreso_estado_solicitud'] = '1';
+
+    $data['ingreso_empresa'] = $this->_getSanitizedParam("ingreso_empresa");
+    $data['ingreso_cargo'] = $this->_getSanitizedParam("ingreso_cargo");
+    $data['ingreso_talla_sueter'] = $this->_getSanitizedParam("ingreso_talla_sueter");
+    $data['ingreso_talla_pantalon'] = $this->_getSanitizedParam("ingreso_talla_pantalon");
+    $data['ingreso_talla_calzado'] = $this->_getSanitizedParam("ingreso_talla_calzado");
+
+
+
     return $data;
   }
 
@@ -821,20 +940,20 @@ class Page_indexController extends Page_mainController
   #region GET CIUDADES
 
   /**
-	 * Genera los valores del campo Ciudad.
-	 *
-	 * @return array cadena con los valores del campo Ciudad.
-	 */
-	private function getCiudad()
-	{
-		$modelData = new Page_Model_DbTable_Dependciudad();
-		$data = $modelData->getList("", "codigo DESC");
-		$array = array();
-		foreach ($data as $key => $value) {
-			$array[$value->codigo] = $value->nombre;
-		}
-		return $array;
-	}
+   * Genera los valores del campo Ciudad.
+   *
+   * @return array cadena con los valores del campo Ciudad.
+   */
+  private function getCiudad()
+  {
+    $modelData = new Page_Model_DbTable_Dependciudad();
+    $data = $modelData->getList("", "codigo DESC");
+    $array = array();
+    foreach ($data as $key => $value) {
+      $array[$value->codigo] = $value->nombre;
+    }
+    return $array;
+  }
 
 
   #region GET ESTADO CIVIL
@@ -842,8 +961,8 @@ class Page_indexController extends Page_mainController
   {
     $array = [];
     $array['Soltero(a)'] = 'Soltero(a)';
-		$array['Casado(a)'] = 'Casado(a)';
-		$array['Viudo(a)'] = 'Viudo(a)';
+    $array['Casado(a)'] = 'Casado(a)';
+    $array['Viudo(a)'] = 'Viudo(a)';
     return $array;
   }
 
@@ -886,9 +1005,9 @@ class Page_indexController extends Page_mainController
   #region GET PARENTESCO
 
   /**
-   * Genera los valores del campo Sexo.
+   * Genera los valores del campo PARENTESCO.
    *
-   * @return array cadena con los valores del campo Sexo.
+   * @return array cadena con los valores del campo PARENTESCO.
    */
   private function getParentesco()
   {
@@ -898,7 +1017,9 @@ class Page_indexController extends Page_mainController
     $array['Hermano'] = 'Hermano';
     $array['Hermana'] = 'Hermana';
     $array['Esposo'] = 'Esposo';
-    $array['Esposa'] = 'Esposa';
+    $array['Novio'] = 'Esposa';
+    $array['Novio'] = 'Novio';
+    $array['Novia'] = 'Novia';
     $array['Hijo'] = 'Hijo';
     $array['Hija'] = 'Hija';
     $array['Abuelo'] = 'Abuelo';
@@ -915,12 +1036,114 @@ class Page_indexController extends Page_mainController
     $array['Suegra'] = 'Suegra';
     $array['Cuñado'] = 'Cuñado';
     $array['Cuñada'] = 'Cuñada';
+    $array['Otro'] = 'Otro';
 
     return $array;
   }
 
+  #region GET CARGOS
+  /**
+   * Genera los valores del campo Cargo.
+   *
+   * @return array cadena con los valores del campo Cargo.
+   */
+  private function getCargo()
+  {
+    $modelData = new Page_Model_DbTable_Cargos();
+    $data = $modelData->getList("cargo_estado = 1", "");
+    $array = array();
+    foreach ($data as $key => $value) {
+      $array[$value->cargo_nombre] = $value->cargo_nombre;
+    }
+    return $array;
+  }
 
 
+  #region GET EMPRESAS
+  /**
+   * Genera los valores del campo Empresa.
+   *
+   * @return array cadena con los valores del campo Empresa.
+   */
+  private function getEmpresa()
+  {
+    $modelData = new Page_Model_DbTable_Empresas();
+    $data = $modelData->getList();
+    $array = array();
+    foreach ($data as $key => $value) {
+      $array[$value->id] = $value->nombre;
+    }
+    return $array;
+  }
+
+
+  #region GET TALLA SUETER
+  /**
+   * Genera los valores del campo SUETER.
+   *
+   * @return array cadena con los valores del campo SUETER.
+   */
+  private function getTallaSueter()
+  {
+    $array = [];
+    $array['S'] = 'S';
+    $array['M'] = 'M';
+    $array['L'] = 'L';
+    $array['XL'] = 'XL';
+    $array['XXL'] = 'XXL';
+    $array['XXXL'] = 'XXXL';
+    return $array;
+  }
+
+  #region GET TALLA PANTALON
+  /**
+   * Genera los valores del campo PANTALON.
+   *
+   * @return array cadena con los valores del campo PANTALON.
+   */
+  private function getTallaPantalon()
+  {
+    $array = [];
+    $array['28'] = '28';
+    $array['30'] = '30';
+    $array['32'] = '32';
+    $array['34'] = '34';
+    $array['36'] = '36';
+    $array['38'] = '38';
+    $array['40'] = '40';
+    $array['42'] = '42';
+    $array['44'] = '44';
+    $array['46'] = '46';
+    $array['48'] = '48';
+    $array['50'] = '50';
+    return $array;
+  }
+
+  #region GET TALLA CALZADO
+  /**
+   * Genera los valores del campo Calzado.
+   *
+   * @return array cadena con los valores del campo Calzado.
+   */
+  private function getTallaCalzado()
+  {
+    $array = [];
+    $array['35'] = '35';
+    $array['36'] = '36';
+    $array['37'] = '37';
+    $array['38'] = '38';
+    $array['39'] = '39';
+    $array['40'] = '40';
+    $array['41'] = '41';
+    $array['42'] = '42';
+    $array['43'] = '43';
+    $array['44'] = '44';
+    $array['45'] = '45';
+    $array['46'] = '46';
+    $array['47'] = '47';
+    $array['48'] = '48';
+    return $array;
+  }
 
   #region VALLIDAR CEDULA
 
@@ -977,6 +1200,16 @@ class Page_indexController extends Page_mainController
     $id = $this->_getSanitizedParam("id");
     $datosLaboralesModel = new Page_Model_DbTable_Datoslaborales();
     $datosLaboralesModel->deleteRegister($id);
+
+    echo json_encode(['title' => 'Listo!', 'status' => 'success', 'text' => 'Registro eliminado exitosamente.']);
+  }
+  public function eliminardatosemergenciaAction()
+  {
+
+    $this->setLayout('blanco');
+    $id = $this->_getSanitizedParam("id");
+    $contactosEmergenciaModel = new Page_Model_DbTable_Datosemergencia();
+    $contactosEmergenciaModel->deleteRegister($id);
 
     echo json_encode(['title' => 'Listo!', 'status' => 'success', 'text' => 'Registro eliminado exitosamente.']);
   }

@@ -9,6 +9,7 @@
   -moz-box-sizing: border-box;
   scroll-margin-top: 15rem;
   position: relative;
+  text-transform: uppercase;
 }
 
 :root {
@@ -243,7 +244,7 @@ header h2 {
 .control-label {
   font-weight: 500;
   color: var(--secondary);
-  font-size: 0.9rem;
+  font-size: 12px;
 }
 
 /* .contenedor-formulario form button {

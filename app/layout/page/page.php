@@ -50,7 +50,9 @@
   <!-- Main Js -->
   <script src="/skins/page/js/main.js?v=2"></script>
 
-
+  <!-- SELECT 2 -->
+  <link href="/components/select2/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="/components/select2/dist/js/select2.min.js"></script>
 
   <!-- Recaptcha -->
   <script src='https://www.google.com/recaptcha/api.js'></script>

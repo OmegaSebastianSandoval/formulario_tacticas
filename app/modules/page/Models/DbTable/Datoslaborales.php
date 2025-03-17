@@ -22,12 +22,13 @@ class Page_Model_DbTable_Datoslaborales extends Db_Table
 	 * @return integer      identificador del  registro que se inserto
 	 */
 	public function insert($data){
+		$datos_laborales_empresa = $data['datos_laborales_empresa'];
 		$datos_laborales_empleo = $data['datos_laborales_empleo'];
 		$datos_laborales_fecha_inicio = $data['datos_laborales_fecha_inicio'];
 		$datos_laborales_fecha_fin = $data['datos_laborales_fecha_fin'];
 		$datos_laborales_motivo_retiro = $data['datos_laborales_motivo_retiro'];
 		$datos_laborales_cedula_colaborador = $data['datos_laborales_cedula_colaborador'];
-		$query = "INSERT INTO datos_laborales( datos_laborales_empleo, datos_laborales_fecha_inicio, datos_laborales_fecha_fin, datos_laborales_motivo_retiro, datos_laborales_cedula_colaborador) VALUES ( '$datos_laborales_empleo', '$datos_laborales_fecha_inicio', '$datos_laborales_fecha_fin', '$datos_laborales_motivo_retiro', '$datos_laborales_cedula_colaborador')";
+		$query = "INSERT INTO datos_laborales(datos_laborales_empresa, datos_laborales_empleo, datos_laborales_fecha_inicio, datos_laborales_fecha_fin, datos_laborales_motivo_retiro, datos_laborales_cedula_colaborador) VALUES ( '$datos_laborales_empresa','$datos_laborales_empleo', '$datos_laborales_fecha_inicio', '$datos_laborales_fecha_fin', '$datos_laborales_motivo_retiro', '$datos_laborales_cedula_colaborador')";
 		$res = $this->_conn->query($query);
         return mysqli_insert_id($this->_conn->getConnection());
 	}
@@ -39,13 +40,13 @@ class Page_Model_DbTable_Datoslaborales extends Db_Table
 	 * @return void
 	 */
 	public function update($data,$id){
-		
+		$datos_laborales_empresa = $data['datos_laborales_empresa'];
 		$datos_laborales_empleo = $data['datos_laborales_empleo'];
 		$datos_laborales_fecha_inicio = $data['datos_laborales_fecha_inicio'];
 		$datos_laborales_fecha_fin = $data['datos_laborales_fecha_fin'];
 		$datos_laborales_motivo_retiro = $data['datos_laborales_motivo_retiro'];
 		$datos_laborales_cedula_colaborador = $data['datos_laborales_cedula_colaborador'];
-		$query = "UPDATE datos_laborales SET  datos_laborales_empleo = '$datos_laborales_empleo', datos_laborales_fecha_inicio = '$datos_laborales_fecha_inicio', datos_laborales_fecha_fin = '$datos_laborales_fecha_fin', datos_laborales_motivo_retiro = '$datos_laborales_motivo_retiro', datos_laborales_cedula_colaborador = '$datos_laborales_cedula_colaborador' WHERE datos_laborales_id = '".$id."'";
+		$query = "UPDATE datos_laborales SET  datos_laborales_empresa = '$datos_laborales_empresa', datos_laborales_empleo = '$datos_laborales_empleo', datos_laborales_fecha_inicio = '$datos_laborales_fecha_inicio', datos_laborales_fecha_fin = '$datos_laborales_fecha_fin', datos_laborales_motivo_retiro = '$datos_laborales_motivo_retiro', datos_laborales_cedula_colaborador = '$datos_laborales_cedula_colaborador' WHERE datos_laborales_id = '".$id."'";
 		$res = $this->_conn->query($query);
 	}
 }

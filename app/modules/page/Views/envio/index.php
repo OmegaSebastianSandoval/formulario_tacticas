@@ -18,8 +18,10 @@
                 <span class="titulo-alerta">Solicitud de <br> Ingreso de Personal</span>
             </div>
             <div class="mensaje mt-4">
-                <p>La solicitud de ingreso no ha podido ser enviada, por favor intente nuevamente.</p>
+                <p>La solicitud de ingreso fue existosa pero el correo de notificación no ha podido ser enviado, por favor comunicarle al administrador del sistema.</p>
                 
+
+                <a href="/page/index/reenviarformulario/?ingreso=<?php echo $_GET['ingreso']?>" class="btn-guardar p-3 mt-3 text-decoration-none d-none">Reenviar Formulario</a>
 
             <!-- La solicitud de ingreso no ha podido ser enviada, por favor intente nuevamente. -->
         </div>

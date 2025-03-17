@@ -23,7 +23,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
 
     <?php if ($this->error == 2) { ?>
         <div class="alert alert-danger text-center mt-3" role="alert">
-            <strong>¡Error!</strong> El email <?= $this->emailValidacion ?> ya se encuentra registrado.
+            <strong>Error!</strong> El email <?= $this->emailValidacion ?> ya se encuentra registrado.
         </div>
     <?php } ?>
 
@@ -207,6 +207,105 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
+                    <label for="ingreso_vive_casa" class="control-label">Vive en casa</label>
+                    <label class="input-group">
+
+                        <select class="form-control" name="ingreso_vive_casa" id="ingreso_vive_casa" required>
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($this->list_ingreso_vive_casa as $key => $value) { ?>
+                                <option <?php if ($this->getObjectVariable($this->content, "ingreso_vive_casa") == $key) {
+                                            echo "selected";
+                                        } ?> value="<?php echo $key; ?>" /> <?= $value; ?></option>
+                            <?php } ?>
+                        </select>
+                    </label>
+                    <div class="help-block with-errors"></div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
+                    <label for="ingreso_empresa" class="control-label">Empresa</label>
+                    <label class="input-group">
+
+                        <select class="form-control" name="ingreso_empresa" id="ingreso_empresa" required>
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($this->list_empresa as $key => $value) { ?>
+                                <option <?php if ($this->getObjectVariable($this->content, "ingreso_empresa") == $key) {
+                                            echo "selected";
+                                        } ?> value="<?php echo $key; ?>" /> <?= $value; ?></option>
+                            <?php } ?>
+                        </select>
+                    </label>
+                    <div class="help-block with-errors"></div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
+                    <label for="ingreso_cargo" class="control-label">Cargo</label>
+                    <label class="input-group">
+
+                        <select class="form-control" name="ingreso_cargo" id="ingreso_cargo" required>
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($this->list_cargo as $key => $value) { ?>
+                                <option <?php if ($this->getObjectVariable($this->content, "ingreso_cargo") == $value) {
+                                            echo "selected";
+                                        } ?> value="<?php echo $value; ?>" /> <?= $value; ?></option>
+                            <?php } ?>
+
+                        </select>
+                    </label>
+                    <div class="help-block with-errors"></div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
+                    <label for="ingreso_talla_sueter" class="control-label">Talla Sueter</label>
+                    <label class="input-group">
+
+                        <select class="form-control" name="ingreso_talla_sueter" id="ingreso_talla_sueter" required>
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($this->list_talla_sueter as $key => $value) { ?>
+                                <option <?php if ($this->getObjectVariable($this->content, "ingreso_talla_sueter") == $key) {
+                                            echo "selected";
+                                        } ?> value="<?php echo $key; ?>" /> <?= $value; ?></option>
+                            <?php } ?>
+
+                        </select>
+                    </label>
+                    <div class="help-block with-errors"></div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
+                    <label for="ingreso_talla_pantalon" class="control-label">Talla Pantalon</label>
+                    <label class="input-group">
+
+                        <select class="form-control" name="ingreso_talla_pantalon" id="ingreso_talla_pantalon" required>
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($this->list_talla_pantalon as $key => $value) { ?>
+                                <option <?php if ($this->getObjectVariable($this->content, "ingreso_talla_pantalon") == $key) {
+                                            echo "selected";
+                                        } ?> value="<?php echo $key; ?>" /> <?= $value; ?></option>
+                            <?php } ?>
+
+                        </select>
+                    </label>
+                    <div class="help-block with-errors"></div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
+                    <label for="ingreso_talla_calzado" class="control-label">Talla calzado</label>
+                    <label class="input-group">
+
+                        <select class="form-control" name="ingreso_talla_calzado" id="ingreso_talla_calzado" required>
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($this->list_talla_calzado as $key => $value) { ?>
+                                <option <?php if ($this->getObjectVariable($this->content, "ingreso_talla_calzado") == $key) {
+                                            echo "selected";
+                                        } ?> value="<?php echo $key; ?>" /> <?= $value; ?></option>
+                            <?php } ?>
+
+                        </select>
+                    </label>
+                    <div class="help-block with-errors"></div>
+                </div>
+
             </div>
 
             <div class="row">
@@ -243,7 +342,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             </div>
 
             <div class="row">
-                <div class="col-12 col-md-6 col-lg-3 col-xl-3 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-4 form-group">
                     <label for="ingreso_nombre_madre" class="control-label">Nombre de la madre</label>
                     <label class="input-group">
 
@@ -259,7 +358,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-3 col-xl-3 form-group">
+                <div class="col-12 col-md-6 col-lg-3 col-xl-4 form-group">
                     <label for="ingreso_nombre_padre" class="control-label">Nombre del padre</label>
                     <label class="input-group">
 
@@ -275,21 +374,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
                     <div class="help-block with-errors"></div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-3 col-xl-2 form-group">
-                    <label for="ingreso_vive_casa" class="control-label">Vive en casa</label>
-                    <label class="input-group">
 
-                        <select class="form-control" name="ingreso_vive_casa" id="ingreso_vive_casa" required>
-                            <option value="">Seleccione...</option>
-                            <?php foreach ($this->list_ingreso_vive_casa as $key => $value) { ?>
-                                <option <?php if ($this->getObjectVariable($this->content, "ingreso_vive_casa") == $key) {
-                                            echo "selected";
-                                        } ?> value="<?php echo $key; ?>" /> <?= $value; ?></option>
-                            <?php } ?>
-                        </select>
-                    </label>
-                    <div class="help-block with-errors"></div>
-                </div>
                 <div class="col-12 col-lg-6 form-group">
                     <label for="ingreso_hobby" class="control-label">Hobby</label>
                     <textarea name="ingreso_hobby" id="ingreso_hobby" class="form-control" rows="3"><?= $this->content->ingreso_hobby; ?></textarea>
@@ -298,11 +383,100 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                 <!-- <input type="hidden" name="ingreso_fecha_solicitud" value="">
                 <input type="hidden" name="ingreso_estado_solicitud" value=""> -->
             </div>
-            
+
 
         </div>
 
-       
+        <div class="content-dashboard dashboard-datos">
+            <div class=" d-flex justify-content-start ">
+                <h3 class="my-0 mb-4"> <i class="fa-solid fa-users" title="Ingreso"></i>
+                    Contactos de emergencia</h3>
+            </div>
+
+            <?php if ($this->content->ingreso_id) { ?>
+                <?php foreach ($this->datosEmergencia as $key => $emergencia) { ?>
+                    <div class="row">
+                        <div class="col-12 col-md-4 form-group">
+                            <label for="nombres_familia" class="control-label">Nombre</label>
+                            <input type="hidden" name="datos_emergencia_id[]" value="<?php echo $emergencia->datos_emergencia_id  ?>">
+                            <input type="text" class="form-control" name="datos_emergencia_nombre[]" value="<?php echo $emergencia->datos_emergencia_nombre ?>">
+                        </div>
+                        <div class="col-9 col-md-3 form-group">
+                            <label for="datos_emergencia_parentesco" class="control-label">Parentesco</label>
+
+                            <select class="form-control" name="datos_emergencia_parentesco[]">
+                                <option value="">Seleccione...</option>
+                                <?php foreach ($this->list_ingreso_parentesco as $key => $value) { ?>
+                                    <option <?php if ($emergencia->datos_emergencia_parentesco == $key) {
+                                                echo "selected";
+                                            } ?> value="<?php echo $key; ?>" /> <?= $value; ?></option>
+                                <?php } ?>
+                            </select>
+
+                        </div>
+                        <div class="col-12 col-md-4 form-group">
+                            <label for="datos_emergencia_telefono" class="control-label ">Teléfono</label>
+
+                            <input type="text" class="form-control validar-telefono" name="datos_emergencia_telefono[]" value="<?php echo $emergencia->datos_emergencia_telefono ?>">
+                        </div>
+
+                        <div class="col-3 col-md-1 d-flex justify-content-center align-items-center">
+                            <button type="button" title="Eliminar registro" class="btn btn-danger btn-sm" onclick="eliminarRegistro(this, <?php echo $emergencia->datos_emergencia_id ?>, 5)">X</button>
+                        </div>
+                    </div>
+                <?php } ?>
+            <?php } ?>
+
+            <div class="row">
+                <div class="col-12 col-md-4 form-group">
+                    <label for="datos_emergencia_nombre[]" class="control-label">Nombre</label>
+                    <label class="input-group">
+
+                        <input type="text" name="datos_emergencia_nombre[]" class="form-control">
+                    </label>
+                    <div class="help-block with-errors"></div>
+                </div>
+                <div class="col-12 col-md-3 form-group">
+                    <label for="datos_emergencia_parentesco[]" class="control-label">Parentesco</label>
+                    <label class="input-group">
+
+
+                        <select class="form-control" name="datos_emergencia_parentesco[]">
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($this->list_ingreso_parentesco as $key => $value) { ?>
+                                <option value="<?php echo $key; ?>"> <?= $value; ?></option>
+                            <?php } ?>
+                        </select>
+
+                    </label>
+                    <div class="help-block with-errors"></div>
+                </div>
+                <div class="col-12 col-md-4 form-group">
+                    <label for="datos_emergencia_telefono[]" class="control-label">Teléfono</label>
+                    <label class="input-group">
+
+                        <input type="text" name="datos_emergencia_telefono[]" class="form-control validar-telefono">
+                    </label>
+                    <div class="help-block with-errors"></div>
+                </div>
+
+
+
+            </div>
+            <div id="camposemergencia" class=""></div>
+            <div class="d-flex justify-content-center mb-4">
+                <a href="javascript:void(0);" onclick="AgregarCamposEmergencia(event)" class="btn btn-outline-dark">Incluir más personas</a>
+            </div>
+
+        </div>
+
+
+
+
+
+
+
+
         <div class="content-dashboard dashboard-datos">
             <div class=" d-flex justify-content-start ">
                 <h3 class="my-0 mb-4"> <i class="fa-solid fa-users" title="Ingreso"></i>
@@ -371,11 +545,11 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             <div class="d-flex justify-content-center mb-4">
                 <a href="javascript:void(0);" onclick="AgregarCampos(event)" class="btn btn-outline-dark">Incluir más personas</a>
             </div>
-            
+
         </div>
 
 
-       
+
         <div class="content-dashboard dashboard-datos">
             <div class=" d-flex justify-content-start ">
                 <h3 class="my-0 mb-4"> <i class="fa-solid fa-house-user" title="Ingreso"></i>
@@ -407,7 +581,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                             </label>
                         </div>
                         <div class="col-10 col-md-5 col-lg-3 form-group">
-                            <label for="vive_con_telefono[]" class="control-label">Teléfono</label>
+                            <label for="vive_con_telefono[]" class="control-label">Telfono</label>
                             <label class="input-group">
                                 <input type="text" name="vive_con_telefono[]" class="form-control validar-telefono" value="<?php echo $vive->vive_con_telefono ?>" required>
                             </label>
@@ -459,10 +633,10 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             <div class="d-flex justify-content-center mb-4">
                 <a href="javascript:void(0);" onclick="AgregarCamposViveCon(event)" class="btn btn-outline-dark">Incluir más personas</a>
             </div>
-            
+
         </div>
 
-     
+
         <div class="content-dashboard dashboard-datos">
             <div class=" d-flex justify-content-start ">
                 <h3 class="my-0 mb-4"> <i class="fa-solid fa-graduation-cap" title="Ingreso"></i>
@@ -472,7 +646,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             <?php if ($this->content->ingreso_id) { ?>
                 <?php foreach ($this->datosAcademicos as $key => $vive) { ?>
                     <div class="row">
-                        <div class="col-12 col-md-11  form-group">
+                        <div class="col-11 col-md-11  form-group">
                             <label for="datos_academicos_formacion[]" class="control-label">Título</label>
                             <label class="input-group">
                                 <input type="hidden" name="datos_academicos_id[]" value="<?php echo $vive->datos_academicos_id ?>">
@@ -488,7 +662,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                 <?php } ?>
             <?php } ?>
             <div class="row">
-                <div class="col-12 col-md-11  form-group">
+                <div class="col-11 col-md-11  form-group">
                     <label for="datos_academicos_formacion[]" class="control-label">Título</label>
                     <label class="input-group">
 
@@ -501,11 +675,11 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             <div class="d-flex justify-content-center mb-4">
                 <a href="javascript:void(0);" onclick="AgregarCamposFormacion(event)" class="btn btn-outline-dark">Incluir más formación</a>
             </div>
-           
+
         </div>
 
 
-        
+
         <div class="content-dashboard dashboard-datos">
             <div class=" d-flex justify-content-start ">
                 <h3 class="my-0 mb-4"> <i class="fa-solid fa-briefcase" title="Ingreso"></i>
@@ -514,20 +688,26 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             <?php if ($this->content->ingreso_id) { ?>
                 <?php foreach ($this->datosLaborales as $key => $vive) { ?>
                     <div class="row">
-                        <div class="col-12 col-md-4 form-group">
+                        <div class="col-12 col-md-3 form-group">
+                            <label for="datos_laborales_empresa[]" class="control-label  ">Empresa</label>
+                            <label class="input-group">
+                                <input type="text" name="datos_laborales_empresa[]" class="form-control" value="<?php echo $vive->datos_laborales_empresa ?>" required>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-3 form-group">
                             <label for="datos_laborales_empleo[]" class="control-label">Cargo</label>
                             <label class="input-group">
                                 <input type="hidden" name="datos_laborales_id[]" value="<?php echo $vive->datos_laborales_id ?>">
                                 <input type="text" name="datos_laborales_empleo[]" class="form-control" value="<?php echo $vive->datos_laborales_empleo ?>" required>
                             </label>
                         </div>
-                        <div class="col-12 col-md-4 form-group">
+                        <div class="col-12 col-md-3 form-group">
                             <label for="datos_laborales_fecha_inicio[]" class="control-label  ">Fecha de inicio</label>
                             <label class="input-group">
                                 <input type="date" name="datos_laborales_fecha_inicio[]" class="form-control fecha-inicio" value="<?php echo $vive->datos_laborales_fecha_inicio ?>" required max="<?= $maxFechaInicioTrabajo ?>">
                             </label>
                         </div>
-                        <div class="col-12 col-md-4 form-group">
+                        <div class="col-12 col-md-3 form-group">
                             <label for="datos_laborales_fecha_fin[]" class="control-label">Fecha de salida</label>
                             <label class="input-group">
                                 <input type="date" name="datos_laborales_fecha_fin[]" class="form-control  fecha-fin" value="<?php echo $vive->datos_laborales_fecha_fin ?>" max="<?= $maxFechaFinTrabajo ?>" required>
@@ -548,7 +728,16 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             <?php } ?>
 
             <div class="row">
-                <div class="col-12 col-md-4 form-group">
+                <div class="col-12 col-md-3 form-group">
+                    <label for="datos_laborales_empresa[]" class="control-label  ">Empresa</label>
+                    <label class="input-group">
+
+                        <input type="text" name="datos_laborales_empresa[]" class="form-control">
+
+                    </label>
+                </div>
+
+                <div class="col-12 col-md-3 form-group">
                     <label for="datos_laborales_empleo[]" class="control-label">Cargo</label>
                     <label class="input-group">
 
@@ -556,14 +745,14 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
                     </label>
 
                 </div>
-                <div class="col-12 col-md-4 form-group">
+                <div class="col-12 col-md-3 form-group">
                     <label for="datos_laborales_fecha_inicio[]" class="control-label  ">Fecha de inicio</label>
                     <label class="input-group">
 
                         <input type="date" name="datos_laborales_fecha_inicio[]" class="form-control fecha-inicio" max="<?= $maxFechaInicioTrabajo ?>">
                     </label>
                 </div>
-                <div class="col-12 col-md-4 form-group">
+                <div class="col-12 col-md-3 form-group">
                     <label for="datos_laborales_fecha_fin[]" class="control-label">Fecha de salida</label>
                     <label class="input-group">
 
@@ -584,7 +773,7 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             <div class="d-flex justify-content-center mb-4">
                 <a href="javascript:void(0);" onclick="AgregarCamposLaborales(event)" class="btn btn-outline-dark">Incluir más datos laborales</a>
             </div>
-           
+
         </div>
 
 
@@ -599,6 +788,43 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
 </div>
 
 <script>
+    function AgregarCamposEmergencia(event) {
+        inputsTelefono.forEach(input => limitarLongitud(input, 12));
+
+        event.preventDefault();
+        const campo = document.createElement('div');
+        campo.className = 'row';
+        campo.innerHTML = `
+        <div class="col-12 col-md-4 form-group">
+            <label for="datos_emergencia_nombre"  class="control-label">Nombres</label>
+            <input type="text" class="form-control" name="datos_emergencia_nombre[]" required>
+        </div>
+        <div class="col-9 col-md-3 form-group">
+            <label for="datos_emergencia_parentesco"  class="control-label">Parentesco</label>
+          
+              <select class="form-control" name="datos_emergencia_parentesco[]">
+                            <option value="">Seleccione...</option>
+                            <?php foreach ($this->list_ingreso_parentesco as $key => $value) { ?>
+                                <option <?php if ($this->getObjectVariable($this->content, "datos_emergencia_parentesco") == $key) {
+                                            echo "selected";
+                                        } ?> value="<?php echo $key; ?>" /> <?= $value; ?></option>
+                            <?php } ?>
+                        </select>
+        </div>
+         <div class="col-12 col-md-4 form-group">
+            <label for="datos_emergencia_telefono"  class="control-label">Teléfono</label>
+            <input type="text" class="form-control validar-telefono" name="datos_emergencia_telefono[]" required>
+        </div>
+        <div class="col-3 col-md-1 d-flex justify-content-center align-items-center">
+            <button type="button" title="Eliminar campos" class="btn btn-danger btn-sm" onclick="EliminarCampo(this)">X</button>
+        </div>
+    `;
+        document.getElementById("camposemergencia").appendChild(campo);
+        // Aplicar la función de validación de longitud al nuevo input de teléfono
+        const nuevoInputTelefono = campo.querySelector('.validar-telefono');
+        limitarLongitud(nuevoInputTelefono, 12);
+    }
+
     function AgregarCampos(event) {
         event.preventDefault();
         const campo = document.createElement('div');
@@ -662,6 +888,9 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
         </div>
     `;
         document.getElementById("camposvivcecon").appendChild(campo);
+        // Aplicar la función de validación de longitud al nuevo input de teléfono
+        const nuevoInputTelefono = campo.querySelector('.validar-telefono');
+        limitarLongitud(nuevoInputTelefono, 12);
     }
 
     function AgregarCamposFormacion(event) {
@@ -688,21 +917,28 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
         const campo = document.createElement('div');
         campo.className = 'row';
         campo.innerHTML = `
-                <div class="col-12 col-md-4 form-group">
+                <div class="col-12 col-md-3 form-group">
+                    <label for="datos_laborales_empresa[]" class="control-label">Empresa</label>
+                    <label class="input-group">
+                        <input type="text" name="datos_laborales_empresa[]" class="form-control">
+                    </label>
+                    
+                </div>
+                <div class="col-12 col-md-3 form-group">
                     <label for="datos_laborales_empleo[]" class="control-label">Cargo</label>
                     <label class="input-group">
                         <input type="text" name="datos_laborales_empleo[]" class="form-control">
                     </label>
                     
                 </div>
-                <div class="col-12 col-md-4 form-group">
+                <div class="col-12 col-md-3 form-group">
                     <label for="datos_laborales_fecha_inicio[]" class="control-label">Fecha de inicio</label>
                     <label class="input-group">
 
                         <input type="date" name="datos_laborales_fecha_inicio[]" class="form-control fecha-inicio">
                     </label>                  
                 </div>
-                <div class="col-12 col-md-4 form-group">
+                <div class="col-12 col-md-3 form-group">
                     <label for="datos_laborales_fecha_fin[]" class="control-label">Fecha de salida</label>
                     <label class="input-group">
 
@@ -783,7 +1019,8 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             1: `/page/index/elimiardependiente/?id=${id}`,
             2: `/page/index/eliminarvivecon/?id=${id}`,
             3: `/page/index/eliminarformacion/?id=${id}`,
-            4: `/page/index/eliminardatoslaborales/?id=${id}`
+            4: `/page/index/eliminardatoslaborales/?id=${id}`,
+            5: `/page/index/eliminardatosemergencia/?id=${id}`,
         };
 
         const url = urls[tipo];
@@ -843,4 +1080,27 @@ $maxFechaInicioTrabajo = date('Y-m-d', $maxFechaInicioTrabajo);
             confirmButtonColor: "#19A9C9",
         });
     }
+
+    // In your Javascript (external .js resource or <script> tag)
+    $(document).ready(function() {
+        $('#ingreso_lugar_nacimiento').select2();
+
+    });
 </script>
+
+<style>
+    .select2-container--default .select2-selection--single {
+        border: 1px solid #ced4da !important;
+        height: auto !important;
+        border-radius: .375rem !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        padding: .225rem .75rem !important;
+        line-height: 1.5 !important;
+    }
+
+    .form-control {
+        font-size: 12px !important;
+    }
+</style>
